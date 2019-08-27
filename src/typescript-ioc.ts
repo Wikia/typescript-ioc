@@ -6,26 +6,7 @@
  */
 
 import 'reflect-metadata';
-
-/**
- * A decorator to tell the container that this class should be handled by the Singleton [[Scope]].
- *
- * ```
- * @ Singleton
- * class PersonDAO {
- *
- * }
- * ```
- *
- * Is the same that use:
- *
- * ```
- * Container.bind(PersonDAO).scope(Scope.Singleton)
- * ```
- */
-export function Singleton(target: Function) {
-    IoCContainer.bind(target).scope(Scope.Singleton);
-}
+import { checkType } from './utils';
 
 /**
  * A decorator to tell the container that this class should be handled by the provided [[Scope]].
@@ -253,7 +234,6 @@ export class Container {
  * Internal implementation of IoC Container.
  */
 class IoCContainer {
-
     public static isBound(source: Function): boolean {
         checkType(source);
         const baseSource = source as FunctionConstructor;
@@ -310,16 +290,6 @@ class IoCContainer {
         }
     }
     private static bindings: Map<FunctionConstructor, ConfigImpl> = new Map<FunctionConstructor, ConfigImpl>();
-}
-
-/**
- * Utility function to validate type
- */
-function checkType(source: Object) {
-    if (!source) {
-        throw new TypeError('Invalid type requested to IoC ' +
-            'container. Type is not defined.');
-    }
 }
 
 /**
@@ -420,7 +390,7 @@ class ConfigImpl implements Config {
 
     public getInstance() {
         if (!this.iocscope) {
-            this.scope(Scope.Local);
+            this.scope(Scope.Singleton);
         }
         return this.iocscope.resolve(this.iocprovider, this.source);
     }
