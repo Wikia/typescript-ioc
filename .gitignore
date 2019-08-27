@@ -9,3 +9,4 @@ node_modules
 reports
 *.log
 npm-debug.log*
+.idea

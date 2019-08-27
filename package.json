@@ -6,6 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "build": "npm run clean && npm run tsc",
+    "watch": "npm run tsc -- -w",
     "clean": "rimraf *.js *.d.ts *.js.map",
     "lint": "tslint ./src/**/*.ts ./test/**/*.ts",
     "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
@@ -14,10 +15,7 @@
     "test:es5": "cross-env NODE_ENV=test mocha",
     "test:es6": "cross-env NODE_ENV=test mocha --opts ./test/mocha-es6.opts",
     "test:coverage": "nyc npm run test:es6",
-    "tsc": "npm run tsc:es6 && npm run tsc:es5 && npm run tsc:index",
-    "tsc:es5": "tsc --outDir . && renamer --find typescript-ioc --replace es5 'typescript-ioc*.js*' && replace 'typescript-ioc.js' 'es5.js' ./es5.js",
-    "tsc:es6": "tsc --target ES6 --outDir . && renamer --find typescript-ioc --replace es6 'typescript-ioc*.js*'  && replace 'typescript-ioc.js' 'es6.js' ./es6.js",
-    "tsc:index": "tsc --outDir . src/index.ts"
+    "tsc": "tsc --outDir ."
   },
   "nyc": {
     "include": [
@@ -83,5 +81,5 @@
     "doc": "doc"
   },
   "main": "./index.js",
-  "typings": "./typescript-ioc.d.ts"
+  "typings": "./index.d.ts"
 }
