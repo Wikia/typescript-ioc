@@ -256,14 +256,14 @@ class IoCContainer {
 
     public static isBound(source: Function): boolean {
         checkType(source);
-        const baseSource = InjectorHanlder.getConstructorFromType(source);
+        const baseSource = source as FunctionConstructor;
         const config: ConfigImpl = IoCContainer.bindings.get(baseSource);
         return (!!config);
     }
 
     public static bind(source: Function): Config {
         checkType(source);
-        const baseSource = InjectorHanlder.getConstructorFromType(source);
+        const baseSource = source as FunctionConstructor;
         let config: ConfigImpl = IoCContainer.bindings.get(baseSource);
         if (!config) {
             config = new ConfigImpl(baseSource);
@@ -282,7 +282,7 @@ class IoCContainer {
 
     public static getType(source: Function): Function {
         checkType(source);
-        const baseSource = InjectorHanlder.getConstructorFromType(source);
+        const baseSource = source as FunctionConstructor;
         const config: ConfigImpl = IoCContainer.bindings.get(baseSource);
         if (!config) {
             throw new TypeError(`The type ${source.name} hasn't been registered with the IOC Container`);
@@ -363,7 +363,7 @@ class ConfigImpl implements Config {
 
     public to(target: FunctionConstructor) {
         checkType(target);
-        const targetSource = InjectorHanlder.getConstructorFromType(target);
+        const targetSource = target as FunctionConstructor;
         this.targetSource = targetSource;
         if (this.source === targetSource) {
             const configImpl = this;
@@ -508,17 +508,8 @@ class SingletonScope extends Scope {
     }
 
     public reset(source: Function) {
-        SingletonScope.instances.delete(InjectorHanlder.getConstructorFromType(source));
+        SingletonScope.instances.delete(source as FunctionConstructor);
     }
 }
 
 Scope.Singleton = new SingletonScope();
-
-/**
- * Utility class to handle injection behavior on class decorations.
- */
-class InjectorHanlder {
-    public static getConstructorFromType(target: Function): FunctionConstructor {
-        return target as FunctionConstructor;
-    }
-}
