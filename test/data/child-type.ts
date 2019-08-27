@@ -1,4 +1,4 @@
-import { Provides } from '../../src/typescript-ioc';
+import { Provides } from '../../src/decorators';
 import IBaseType from './parent-type';
 
 @Provides(IBaseType)

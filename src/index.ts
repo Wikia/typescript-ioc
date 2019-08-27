@@ -1,2 +1,5 @@
-export * from './typescript-ioc';
-export { checkType } from './utils';
+export * from './container';
+export * from './scope';
+export * from './decorators';
+export * from './provider';
+export { Config } from './config';

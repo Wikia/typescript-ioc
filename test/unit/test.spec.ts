@@ -4,7 +4,9 @@ import * as assert from 'assert';
 import * as chai from 'chai';
 import 'mocha';
 import "reflect-metadata";
-import { AutoWired, Container, Inject, Provided, Provides, Scope, Scoped, Singleton } from "../../src/typescript-ioc";
+import { Inject, Provided, Provides, Scoped } from '../../src/decorators';
+import { Scope } from '../../src/scope';
+import { AutoWired, Container, Singleton } from "../../src/container";
 
 const expect = chai.expect;
 
