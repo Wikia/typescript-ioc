@@ -106,45 +106,10 @@ export function Provides(target: Function) {
 }
 
 /**
- * A decorator to tell the container that this class should its instantiation always handled by the Container.
- *
- * An AutoWired class will have its constructor overriden to always delegate its instantiation to the IoC Container.
- * So, if you write:
- *
- * ```
- * @ AutoWired
- * class PersonService {
- *   @ Inject
- *   personDAO: PersonDAO;
- * }
- * ```
- *
- * Any PersonService instance will be created by the IoC Container, even when a direct call to its constructor is called:
- *
- * ```
- * let PersonService = new PersonService(); // will be returned by Container, and all internal dependencies resolved.
- * ```
- *
- * It is the same that use:
- *
- * ```
- * Container.bind(PersonService);
- * let personService: PersonService = Container.get(PersonService);
- * ```
- */
-export function AutoWired(target: Function) { // <T extends {new(...args:any[]):{}}>(target:T) {
-    const newConstructor = InjectorHanlder.decorateConstructor(target);
-    const config: ConfigImpl = IoCContainer.bind(target) as ConfigImpl;
-    config.toConstructor(newConstructor);
-    return newConstructor;
-}
-
-/**
  * A decorator to request from Container that it resolve the annotated property dependency.
  * For example:
  *
  * ```
- * @ AutoWired
  * class PersonService {
  *    constructor (@ Inject creationTime: Date) {
  *       this.creationTime = creationTime;
@@ -202,7 +167,7 @@ function InjectParamDecorator(target: Function, propertyKey: string | symbol, pa
 
 /**
  * The IoC Container class. Can be used to register and to retrieve your dependencies.
- * You can also use de decorators [[AutoWired]], [[Scoped]], [[Singleton]], [[Provided]] and [[Provides]]
+ * You can also use de decorators [[Scoped]], [[Singleton]], [[Provided]] and [[Provides]]
  * to configure the dependency directly on the class.
  */
 export class Container {
@@ -220,7 +185,6 @@ export class Container {
      */
     public static bind(source: Function): Config {
         if (!IoCContainer.isBound(source)) {
-            AutoWired(source);
             return IoCContainer.bind(source).to(source);
         }
 
@@ -554,19 +518,6 @@ Scope.Singleton = new SingletonScope();
  * Utility class to handle injection behavior on class decorations.
  */
 class InjectorHanlder {
-    public static decorateConstructor(target: Function) {
-        let newConstructor: any;
-        // tslint:disable-next-line:class-name
-        newConstructor = class ioc_wrapper extends (target as FunctionConstructor) {
-            constructor(...args: Array<any>) {
-                super(...args);
-                IoCContainer.assertInstantiable(target);
-            }
-        };
-        newConstructor['__parent'] = target;
-        return newConstructor;
-    }
-
     public static getConstructorFromType(target: Function): FunctionConstructor {
         return target as FunctionConstructor;
     }
