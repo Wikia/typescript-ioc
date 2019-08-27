@@ -1,7 +1,4 @@
 .DS_Store
-*.js
-*.js.map
-*.d.ts
 doc
 node_modules
 .vscode
@@ -9,3 +6,4 @@ node_modules
 reports
 *.log
 npm-debug.log*
+.idea

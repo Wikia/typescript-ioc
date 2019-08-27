@@ -1,14 +1,13 @@
 {
     "compilerOptions": {
-        "declaration": true,
+        "outDir": "dist/commonjs",
+        "module": "commonjs",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": [
-            "es6", 
+            "es6",
             "dom"
         ],
-        "module": "commonjs",
-        "newLine": "LF",
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
@@ -21,6 +20,6 @@
         "target": "es5"
     },
     "include": [
-        "src/typescript-ioc.ts", "src/container-config.ts"
+        "src"
     ]
 }
