@@ -4,7 +4,6 @@ import * as assert from 'assert';
 import * as chai from 'chai';
 import 'mocha';
 import "reflect-metadata";
-import { ContainerConfig } from "../../src/container-config";
 import { AutoWired, Container, Inject, Provided, Provides, Scope, Scoped, Singleton } from "../../src/typescript-ioc";
 
 const expect = chai.expect;
@@ -488,18 +487,4 @@ describe("The IoC Container Config.to()", () => {
 		instance = Container.get(FirstClass);
 		expect(instance.getValue()).to.equal('third');
 	});
-});
-
-describe("The IoC Container", () => {
-
-	it("should find classes in different files", () => {
-		ContainerConfig.addSource('data/*', 'test');
-
-		const Worker = require('../data/classes').Worker;
-		const instance = new Worker();
-		expect(instance).to.exist;
-		expect(instance.type).to.exist;
-		instance.work();
-	});
-
 });
