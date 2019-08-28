@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 var ioc_container_1 = require("./ioc-container");

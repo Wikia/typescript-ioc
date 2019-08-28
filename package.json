@@ -16,8 +16,8 @@
     "test:es6": "cross-env NODE_ENV=test mocha --opts ./test/mocha-es6.opts",
     "test:coverage": "nyc npm run test:es6",
     "tsc": "npm run tsc:module && npm run tsc:commonjs",
-    "tsc:module": "tsc --outDir dist/module --declarationDir dist/types --declaration true",
-    "tsc:commonjs": "tsc --outDir dist/commonjs --module commonjs"
+    "tsc:module": "tsc --project tsconfig.module.json",
+    "tsc:commonjs": "tsc"
   },
   "nyc": {
     "include": [

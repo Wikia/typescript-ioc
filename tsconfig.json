@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
+        "outDir": "dist/commonjs",
+        "module": "commonjs",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": [
             "es6",
             "dom"
         ],
-        "module": "es2015",
-        "types": ["reflect-metadata"],
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,

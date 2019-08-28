@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "declaration": true,
+        "declarationDir": "dist/types",
+        "outDir": "dist/module",
+        "module": "es2015",
+        "types": ["reflect-metadata"]
+    }
+}
