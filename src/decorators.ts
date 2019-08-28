@@ -107,11 +107,11 @@ export function Provides(target: Function) {
  * console.log('PersonService.personDAO: ' + personService.personDAO);
  * ```
  */
-export function Inject(...args: Array<any>) {
-  if (args.length < 3 || typeof args[2] === 'undefined') {
-    return InjectPropertyDecorator.apply(this, args);
-  } else if (args.length === 3 && typeof args[2] === 'number') {
-    return InjectParamDecorator.apply(this, args);
+export function Inject(target: any, targetKey: string, index?: number) {
+  if (typeof index === 'undefined') {
+    return InjectPropertyDecorator.apply(this, [target, targetKey]);
+  } else if (typeof index === 'number') {
+    return InjectParamDecorator.apply(this, [target, targetKey, index]);
   }
 
   throw new Error('Invalid @Inject Decorator declaration.');
@@ -120,23 +120,23 @@ export function Inject(...args: Array<any>) {
 /**
  * Decorator processor for [[Inject]] decorator on properties
  */
-function InjectPropertyDecorator(target: Function, key: string) {
-  let t = Reflect.getMetadata('design:type', target, key);
+function InjectPropertyDecorator(target: Function, targetKey: string) {
+  let t = Reflect.getMetadata('design:type', target, targetKey);
   if (!t) {
     // Needed to support react native inheritance
-    t = Reflect.getMetadata('design:type', target.constructor, key);
+    t = Reflect.getMetadata('design:type', target.constructor, targetKey);
   }
-  IoCContainer.injectProperty(target.constructor, key, t);
+  IoCContainer.injectProperty(target.constructor, targetKey, t);
 }
 
 /**
  * Decorator processor for [[Inject]] decorator on constructor parameters
  */
-function InjectParamDecorator(target: Function, propertyKey: string | symbol, parameterIndex: number) {
-  if (!propertyKey) { // only intercept constructor parameters
+function InjectParamDecorator(target: Function, targetKey: string | symbol, index: number) {
+  if (!targetKey) { // only intercept constructor parameters
     const config: ConfigImpl = IoCContainer.bind(target) as ConfigImpl;
     config.paramTypes = config.paramTypes || [];
     const paramTypes: Array<any> = Reflect.getMetadata('design:paramtypes', target);
-    config.paramTypes.unshift(paramTypes[parameterIndex]);
+    config.paramTypes.unshift(paramTypes[index]);
   }
 }

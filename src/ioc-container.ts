@@ -63,4 +63,3 @@ export class IoCContainer {
 
   private static bindings: Map<FunctionConstructor, ConfigImpl> = new Map<FunctionConstructor, ConfigImpl>();
 }
-
