@@ -1,4 +1,3 @@
-'use strict';
 import 'reflect-metadata';
 import { IoCContainer } from './ioc-container';
 var Container = (function () {

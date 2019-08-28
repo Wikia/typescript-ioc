@@ -1,10 +1,8 @@
-'use strict';
 /**
  * This is a lightweight annotation-based dependency injection container for typescript.
  *
  * Visit the project page on [GitHub] (https://github.com/thiagobustamante/typescript-ioc).
  */
-
 import 'reflect-metadata';
 import { Config, ConfigImpl } from './config';
 import { IoCContainer } from './ioc-container';
