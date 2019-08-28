@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import 'mocha';
 import 'reflect-metadata';
 import { Container } from '../../src/container';
-import { Inject, Provided } from '../../src/decorators';
+import { Inject } from '../../src/decorators';
 import { Scope } from '../../src/scope';
 
 const container = new Container();
@@ -60,7 +60,7 @@ describe('@Inject annotation on Constructor parameter', () => {
   const constructorsArgs: Array<any> = new Array<any>();
   const constructorsMultipleArgs: Array<any> = new Array<any>();
 
-  class TesteConstructor {
+  class TestConstructor {
     injectedDate: Date;
 
     constructor(@Inject date: Date) {
@@ -69,20 +69,20 @@ describe('@Inject annotation on Constructor parameter', () => {
     }
   }
 
-  class TesteConstructor2 {
+  class TestConstructor2 {
     @Inject
-    teste1: TesteConstructor;
+    teste1: TestConstructor;
   }
 
   it('should inject a new value as argument on cosntrutor call, when parameter is not provided', () => {
-    const instance: TesteConstructor2 = new TesteConstructor2();
+    const instance: TestConstructor2 = new TestConstructor2();
     expect(instance.teste1.injectedDate).to.exist;
     expect(constructorsArgs.length).to.equal(1);
   });
 
   it('should not inject a new value as argument on cosntrutor call, when parameter is provided', () => {
     const myDate: Date = new Date(1);
-    const instance: TesteConstructor = new TesteConstructor(myDate);
+    const instance: TestConstructor = new TestConstructor(myDate);
     expect(instance.injectedDate).to.equals(myDate);
   });
 
@@ -113,115 +113,6 @@ describe('@Inject annotation on Constructor parameter', () => {
   });
 });
 
-describe('Inheritance on autowired types', () => {
-  const constructorsCalled: Array<string> = new Array<string>();
-
-  interface TesteInterface {
-    property1: Date;
-  }
-
-  class TesteAbstract implements TesteInterface {
-    bbb: Date;
-
-    @Inject
-    property1: Date;
-
-    constructor() {
-      constructorsCalled.push('TesteAbstract');
-    }
-  }
-
-  class Teste1 extends TesteAbstract {
-    proper1: string = 'Property';
-
-    @Inject
-    property2: Date;
-
-    constructor() {
-      super();
-      constructorsCalled.push('Teste1');
-    }
-  }
-
-  class Teste2 extends Teste1 {
-    @Inject abc: number = 123;
-    @Inject property3: Date;
-
-    constructor() {
-      super();
-      constructorsCalled.push('Teste2');
-    }
-  }
-
-  class ConstructorMethodInject extends Teste2 {
-    testOK: boolean;
-
-    constructor() {
-      super();
-      if (this.myMethod()) {
-        this.testOK = true;
-      }
-    }
-
-    myMethod() {
-      return true;
-    }
-  }
-
-
-  it('should inject all fields from all types and call all constructors', () => {
-    const instance: Teste2 = new Teste2();
-    const instance2: Teste2 = new Teste2();
-    instance2.abc = 234;
-    expect(instance.property1).to.exist;
-    expect(instance.property2).to.exist;
-    expect(instance.abc).to.eq(123);
-    expect(instance2.abc).to.eq(234);
-    expect(constructorsCalled).to.include.members(['TesteAbstract', 'Teste1', 'Teste2']);
-  });
-
-  it('should keep the object prototype chain even before the constructor run', () => {
-    const instance: ConstructorMethodInject = new ConstructorMethodInject();
-    expect(instance.testOK).to.equal(true);
-  });
-});
-
-describe('Provider for autowired types', () => {
-  const providerCreations: Array<any> = new Array<any>();
-
-  const provider = {
-    get: () => {
-      const result = new ProvidedTeste();
-      providerCreations.push(result);
-      return result;
-    }
-  };
-
-  @Provided(provider)
-  class ProvidedTeste {
-    constructor() {
-      // Nothing
-    }
-  }
-
-  class ProvidedTeste2 {
-    @Inject
-    teste1: ProvidedTeste;
-
-    constructor() {
-      // Nothing
-    }
-  }
-
-  it('should inject all fields from all types using a provider to instantiate', () => {
-    const instance: ProvidedTeste2 = new ProvidedTeste2();
-    expect(instance).to.exist;
-    expect(instance.teste1).to.exist;
-    expect(providerCreations.length).to.equal(1);
-    expect(providerCreations[0]).to.equal(instance.teste1);
-  });
-});
-
 describe('Default Implementation class', () => {
   class BaseClass {
   }
@@ -232,6 +123,7 @@ describe('Default Implementation class', () => {
   }
 
   it('should inform Container that it is the implementation for its base type', () => {
+    container.bind(BaseClass).to(ImplementationClass);
     const instance: ImplementationClass = container.get(BaseClass) as ImplementationClass;
     const test = instance['testProp'];
     expect(test).to.exist;
@@ -384,18 +276,6 @@ describe('The IoC Container', () => {
   container.bind(ContainerSingletonInstantiation)
     .to(ContainerSingletonInstantiation)
     .scope(Scope.Singleton);
-
-  it('should not allow instantiations of Singleton classes.', () => {
-    expect(function () { new SingletonInstantiation(); })
-      .to
-      .throw(TypeError, 'Can not instantiate Singleton class. Ask Container for it, using container.get');
-  });
-
-  it('should be able to work with Config.scope() changes.', () => {
-    expect(function () { new ContainerSingletonInstantiation(); })
-      .to
-      .throw(TypeError, 'Can not instantiate Singleton class. Ask Container for it, using container.get');
-  });
 
   it('should allow Container instantiation of Singleton classes.', () => {
     const instance: SingletonInstantiation = container.get(SingletonInstantiation);
