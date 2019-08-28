@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc -w",
     "build": "npm run clean && npm run tsc",
-    "watch": "npm run tsc -- -w",
+    "watch": "npm run tsc:module -- -w",
     "clean": "rimraf dist",
     "lint": "tslint ./src/**/*.ts ./test/**/*.ts",
     "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
@@ -15,7 +15,9 @@
     "test:es5": "cross-env NODE_ENV=test mocha",
     "test:es6": "cross-env NODE_ENV=test mocha --opts ./test/mocha-es6.opts",
     "test:coverage": "nyc npm run test:es6",
-    "tsc": "tsc --outDir dist"
+    "tsc": "npm run tsc:module && npm run tsc:commonjs",
+    "tsc:module": "tsc --outDir dist/module --declarationDir dist/types --declaration true",
+    "tsc:commonjs": "tsc --outDir dist/commonjs --module commonjs"
   },
   "nyc": {
     "include": [
@@ -80,6 +82,7 @@
   "directories": {
     "doc": "doc"
   },
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts"
+  "main": "./dist/commonjs/index.js",
+  "module": "./dist/module/index.js",
+  "typings": "./dist/types/index.d.ts"
 }

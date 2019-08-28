@@ -1,14 +1,13 @@
 {
     "compilerOptions": {
-        "declaration": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": [
             "es6",
             "dom"
         ],
-        "module": "commonjs",
-        "newLine": "LF",
+        "module": "es2015",
+        "types": ["reflect-metadata"],
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
