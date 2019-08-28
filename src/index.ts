@@ -1,3 +1,5 @@
+console.log('typescript ioc - init');
+
 export * from './container';
 export * from './scope';
 export * from './decorators';
