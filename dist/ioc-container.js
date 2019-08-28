@@ -49,12 +49,6 @@ var IoCContainer = (function () {
             }
         });
     };
-    IoCContainer.assertInstantiable = function (target) {
-        if (target['__block_Instantiation']) {
-            throw new TypeError('Can not instantiate Singleton class. ' +
-                'Ask Container for it, using Container.get');
-        }
-    };
     IoCContainer.bindings = new Map();
     return IoCContainer;
 }());

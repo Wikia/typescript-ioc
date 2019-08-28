@@ -5,6 +5,5 @@ export declare class IoCContainer {
     static get(source: Function): any;
     static getType(source: Function): Function;
     static injectProperty(target: Function, key: string, propertyType: Function): void;
-    static assertInstantiable(target: any): void;
     private static bindings;
 }

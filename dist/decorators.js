@@ -13,12 +13,6 @@ function Provided(provider) {
     };
 }
 exports.Provided = Provided;
-function Provides(target) {
-    return function (to) {
-        ioc_container_1.IoCContainer.bind(target).to(to);
-    };
-}
-exports.Provides = Provides;
 function Inject(target, targetKey, index) {
     if (typeof index === 'undefined') {
         return InjectPropertyDecorator.apply(this, [target, targetKey]);

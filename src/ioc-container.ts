@@ -54,12 +54,5 @@ export class IoCContainer {
     });
   }
 
-  public static assertInstantiable(target: any) {
-    if (target['__block_Instantiation']) {
-      throw new TypeError('Can not instantiate Singleton class. ' +
-        'Ask Container for it, using Container.get');
-    }
-  }
-
   private static bindings: Map<FunctionConstructor, ConfigImpl> = new Map<FunctionConstructor, ConfigImpl>();
 }
