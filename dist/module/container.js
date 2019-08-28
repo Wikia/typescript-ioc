@@ -3,40 +3,40 @@ import 'reflect-metadata';
 import { IoCContainer } from './ioc-container';
 var Container = (function () {
     function Container() {
+        this.snapshots = {
+            providers: new Map(),
+            scopes: new Map(),
+        };
     }
-    Container.bind = function (source) {
+    Container.prototype.bind = function (source) {
         if (!IoCContainer.isBound(source)) {
             return IoCContainer.bind(source).to(source);
         }
         return IoCContainer.bind(source);
     };
-    Container.get = function (source) {
+    Container.prototype.get = function (source) {
         return IoCContainer.get(source);
     };
-    Container.getType = function (source) {
+    Container.prototype.getType = function (source) {
         return IoCContainer.getType(source);
     };
-    Container.snapshot = function (source) {
-        var config = Container.bind(source);
-        Container.snapshots.providers.set(source, config.iocprovider);
+    Container.prototype.snapshot = function (source) {
+        var config = this.bind(source);
+        this.snapshots.providers.set(source, config.iocprovider);
         if (config.iocscope) {
-            Container.snapshots.scopes.set(source, config.iocscope);
+            this.snapshots.scopes.set(source, config.iocscope);
         }
         return;
     };
-    Container.restore = function (source) {
-        if (!(Container.snapshots.providers.has(source))) {
+    Container.prototype.restore = function (source) {
+        if (!(this.snapshots.providers.has(source))) {
             throw new TypeError('Config for source was never snapshoted.');
         }
-        var config = Container.bind(source);
-        config.provider(Container.snapshots.providers.get(source));
-        if (Container.snapshots.scopes.has(source)) {
-            config.scope(Container.snapshots.scopes.get(source));
+        var config = this.bind(source);
+        config.provider(this.snapshots.providers.get(source));
+        if (this.snapshots.scopes.has(source)) {
+            config.scope(this.snapshots.scopes.get(source));
         }
-    };
-    Container.snapshots = {
-        providers: new Map(),
-        scopes: new Map(),
     };
     return Container;
 }());

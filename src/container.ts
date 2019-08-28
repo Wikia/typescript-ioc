@@ -18,6 +18,15 @@ import { Scope } from './scope';
  */
 export class Container {
     /**
+     * Internal storage for snapshots
+     * @type {providers: Map<Function, Provider>; scopes: Map<Function, Scope>}
+     */
+    private snapshots: { providers: Map<Function, Provider>; scopes: Map<Function, Scope> } = {
+        providers: new Map(),
+        scopes: new Map(),
+    };
+
+    /**
      * Add a dependency to the Container. If this type is already present, just return its associated
      * configuration object.
      * Example of usage:
@@ -28,7 +37,7 @@ export class Container {
      * @param source The type that will be bound to the Container
      * @return a container configuration
      */
-    public static bind(source: Function): Config {
+    bind(source: Function): Config {
         if (!IoCContainer.isBound(source)) {
             return IoCContainer.bind(source).to(source);
         }
@@ -43,7 +52,7 @@ export class Container {
      * @param source The dependency type to resolve
      * @return an object resolved for the given source type;
      */
-    public static get<T extends Function>(source: T): T[keyof T] {
+    get<T extends Function>(source: T): T[keyof T] {
         return IoCContainer.get(source);
     }
 
@@ -52,7 +61,7 @@ export class Container {
      * @param source The dependency type to resolve
      * @return an object resolved for the given source type;
      */
-    public static getType(source: Function) {
+    getType(source: Function) {
         return IoCContainer.getType(source);
     }
 
@@ -60,11 +69,11 @@ export class Container {
      * Store the state for a specified binding.  Can then be restored later.   Useful for testing.
      * @param source The dependency type
      */
-    public static snapshot(source: Function): void {
-        const config = Container.bind(source) as ConfigImpl;
-        Container.snapshots.providers.set(source, config.iocprovider);
+    snapshot(source: Function): void {
+        const config = this.bind(source) as ConfigImpl;
+        this.snapshots.providers.set(source, config.iocprovider);
         if (config.iocscope) {
-            Container.snapshots.scopes.set(source, config.iocscope);
+            this.snapshots.scopes.set(source, config.iocscope);
         }
         return;
     }
@@ -73,24 +82,15 @@ export class Container {
      * Restores the state for a specified binding that was previously captured by snapshot.
      * @param source The dependency type
      */
-    public static restore(source: Function): void {
-        if (!(Container.snapshots.providers.has(source))) {
+    restore(source: Function): void {
+        if (!(this.snapshots.providers.has(source))) {
             throw new TypeError('Config for source was never snapshoted.');
         }
-        const config = Container.bind(source);
-        config.provider(Container.snapshots.providers.get(source));
-        if (Container.snapshots.scopes.has(source)) {
-            config.scope(Container.snapshots.scopes.get(source));
+        const config = this.bind(source);
+        config.provider(this.snapshots.providers.get(source));
+        if (this.snapshots.scopes.has(source)) {
+            config.scope(this.snapshots.scopes.get(source));
         }
     }
-
-    /**
-     * Internal storage for snapshots
-     * @type {providers: Map<Function, Provider>; scopes: Map<Function, Scope>}
-     */
-    private static snapshots: { providers: Map<Function, Provider>; scopes: Map<Function, Scope> } = {
-        providers: new Map(),
-        scopes: new Map(),
-    };
 }
 

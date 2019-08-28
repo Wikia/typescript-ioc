@@ -33,18 +33,18 @@ export interface Config {
 }
 
 export class ConfigImpl implements Config {
-  public source: Function;
-  public targetSource: Function;
-  public iocprovider: Provider;
-  public iocscope: Scope;
-  public decoratedConstructor: FunctionConstructor;
-  public paramTypes: Array<any>;
+  source: Function;
+  targetSource: Function;
+  iocprovider: Provider;
+  iocscope: Scope;
+  decoratedConstructor: FunctionConstructor;
+  paramTypes: Array<any>;
 
   constructor(source: Function) {
     this.source = source;
   }
 
-  public to(target: FunctionConstructor) {
+  to(target: FunctionConstructor) {
     checkType(target);
     const targetSource = target as FunctionConstructor;
     this.targetSource = targetSource;
@@ -72,7 +72,7 @@ export class ConfigImpl implements Config {
     return this;
   }
 
-  public provider(provider: Provider) {
+  provider(provider: Provider) {
     this.iocprovider = provider;
     if (this.iocscope) {
       this.iocscope.reset(this.source);
@@ -80,7 +80,7 @@ export class ConfigImpl implements Config {
     return this;
   }
 
-  public scope(scope: Scope) {
+  scope(scope: Scope) {
     this.iocscope = scope;
     if (scope === Scope.Singleton) {
       (this as any).source['__block_Instantiation'] = true;
@@ -91,17 +91,17 @@ export class ConfigImpl implements Config {
     return this;
   }
 
-  public withParams(...paramTypes: Array<any>) {
+  withParams(...paramTypes: Array<any>) {
     this.paramTypes = paramTypes;
     return this;
   }
 
-  public toConstructor(newConstructor: FunctionConstructor) {
+  toConstructor(newConstructor: FunctionConstructor) {
     this.decoratedConstructor = newConstructor;
     return this;
   }
 
-  public getInstance() {
+  getInstance() {
     if (!this.iocscope) {
       this.scope(Scope.Singleton);
     }

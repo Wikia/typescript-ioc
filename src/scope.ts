@@ -9,13 +9,13 @@ export abstract class Scope {
    * This is the default scope.
    */
     // tslint:disable-next-line:variable-name
-  public static Transient: Scope;
+  static Transient: Scope;
   /**
    * A reference to the SingletonScope. Singleton Scope return the same instance for any
    * dependency resolution requested.
    */
     // tslint:disable-next-line:variable-name
-  public static Singleton: Scope;
+  static Singleton: Scope;
 
   /**
    * Method called when the Container needs to resolve a dependency. It should return the instance that will
@@ -24,13 +24,13 @@ export abstract class Scope {
    * @param source The source type of this bind.
    * @return the resolved instance.
    */
-  public abstract resolve(provider: Provider, source: Function): any;
+  abstract resolve(provider: Provider, source: Function): any;
 
   /**
    * Called by the IoC Container when some configuration is changed on the Container binding.
    * @param source The source type that has its configuration changed.
    */
-  public reset(source: Function) {
+  reset(source: Function) {
     // Do nothing
   }
 }
@@ -39,7 +39,7 @@ export abstract class Scope {
  * Default [[Scope]] that always create a new instace for any dependency resolution request
  */
 class TransientScope extends Scope {
-  public resolve(provider: Provider, source: Function) {
+  resolve(provider: Provider, source: Function) {
     return provider.get();
   }
 }
@@ -50,7 +50,7 @@ class TransientScope extends Scope {
 class SingletonScope extends Scope {
   private static instances: Map<Function, any> = new Map<Function, any>();
 
-  public resolve(provider: Provider, source: any) {
+  resolve(provider: Provider, source: any) {
     let instance: any = SingletonScope.instances.get(source);
     if (!instance) {
       source['__block_Instantiation'] = false;
@@ -61,7 +61,7 @@ class SingletonScope extends Scope {
     return instance;
   }
 
-  public reset(source: Function) {
+  reset(source: Function) {
     SingletonScope.instances.delete(source as FunctionConstructor);
   }
 }

@@ -2,9 +2,9 @@ import { Inject } from '../../src/decorators';
 import IBaseType from './parent-type';
 
 export class Worker {
-    @Inject public type: IBaseType;
+    @Inject type: IBaseType;
 
-    public work() {
+    work() {
         this.type.method1();
     }
 }

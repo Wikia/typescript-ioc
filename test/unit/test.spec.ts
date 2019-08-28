@@ -4,9 +4,9 @@ import * as assert from 'assert';
 import * as chai from 'chai';
 import 'mocha';
 import "reflect-metadata";
+import { AutoWired, Container, Singleton } from "../../src/container";
 import { Inject, Provided, Provides, Scoped } from '../../src/decorators';
 import { Scope } from '../../src/scope';
-import { AutoWired, Container, Singleton } from "../../src/container";
 
 const expect = chai.expect;
 
@@ -15,14 +15,14 @@ describe("@Inject annotation on a property", () => {
 
 	@AutoWired
 	class SimppleInject {
-		@Inject public dateProperty: Date;
+		@Inject dateProperty: Date;
 	}
 
 	@AutoWired
 	class ConstructorSimppleInject {
-		@Inject public aDateProperty: Date;
+		@Inject aDateProperty: Date;
 
-		public testOK: boolean;
+		testOK: boolean;
 
 		constructor() {
 			if (this.aDateProperty) {
@@ -67,7 +67,7 @@ describe("@Inject annotation on Constructor parameter", () => {
 
 	@AutoWired
 	class TesteConstructor {
-		public injectedDate: Date;
+		injectedDate: Date;
 		constructor(@Inject date: Date) {
 			constructorsArgs.push(date);
 			this.injectedDate = date;
@@ -77,7 +77,7 @@ describe("@Inject annotation on Constructor parameter", () => {
 	@AutoWired
 	class TesteConstructor2 {
 		@Inject
-		public teste1: TesteConstructor;
+		teste1: TesteConstructor;
 	}
 
 	it("should inject a new value as argument on cosntrutor call, when parameter is not provided", () => {
@@ -128,10 +128,10 @@ describe("Inheritance on autowired types", () => {
 
 	@AutoWired
 	class TesteAbstract implements TesteInterface {
-		public bbb: Date;
+		bbb: Date;
 
 		@Inject
-		public property1: Date;
+		property1: Date;
 		constructor() {
 			constructorsCalled.push('TesteAbstract');
 		}
@@ -139,10 +139,10 @@ describe("Inheritance on autowired types", () => {
 
 	@AutoWired
 	class Teste1 extends TesteAbstract {
-		public proper1: string = "Property";
+		proper1: string = "Property";
 
 		@Inject
-		public property2: Date;
+		property2: Date;
 		constructor() {
 			super();
 			constructorsCalled.push('Teste1');
@@ -151,8 +151,8 @@ describe("Inheritance on autowired types", () => {
 
 	@AutoWired
 	class Teste2 extends Teste1 {
-		@Inject public abc: number = 123;
-		@Inject public property3: Date;
+		@Inject abc: number = 123;
+		@Inject property3: Date;
 		constructor() {
 			super();
 			constructorsCalled.push('Teste2');
@@ -161,7 +161,7 @@ describe("Inheritance on autowired types", () => {
 
 	@AutoWired
 	class ConstructorMethodInject extends Teste2 {
-		public testOK: boolean;
+		testOK: boolean;
 
 		constructor() {
 			super();
@@ -170,7 +170,7 @@ describe("Inheritance on autowired types", () => {
 			}
 		}
 
-		public myMethod() {
+		myMethod() {
 			return true;
 		}
 	}
@@ -197,7 +197,7 @@ describe("Custom scopes for autowired types", () => {
 	const scopeCreations: Array<any> = new Array<any>();
 
 	class MyScope extends (Scope) {
-		public resolve(provider: any, source: Function) {
+		resolve(provider: any, source: Function) {
 			const result = provider.get();
 			scopeCreations.push(result);
 			return result;
@@ -214,7 +214,7 @@ describe("Custom scopes for autowired types", () => {
 
 	@AutoWired
 	class ScopedTeste2 {
-		@Inject public teste1: ScopedTeste;
+		@Inject teste1: ScopedTeste;
 		constructor() {
 			// Nothing
 		}
@@ -252,7 +252,7 @@ describe("Provider for autowired types", () => {
 	@AutoWired
 	class ProvidedTeste2 {
 		@Inject
-		public teste1: ProvidedTeste;
+		teste1: ProvidedTeste;
 		constructor() {
 			// Nothing
 		}
@@ -275,7 +275,7 @@ describe("Default Implementation class", () => {
 	@Provides(BaseClass)
 	class ImplementationClass implements BaseClass {
 		@Inject
-		public testProp: Date;
+		testProp: Date;
 	}
 
 	it("should inform Container that it is the implementation for its base type", () => {
@@ -289,7 +289,7 @@ describe("The IoC Container.bind(source)", () => {
 
 	class ContainerInjectTest {
 		@Inject
-		public dateProperty: Date;
+		dateProperty: Date;
 	}
 
 	Container.bind(ContainerInjectTest);
@@ -308,7 +308,7 @@ describe("The IoC Container.bind(source)", () => {
 describe("The IoC Container.get(source)", () => {
 
 	class ContainerInjectConstructorTest {
-		public injectedDate: Date;
+		injectedDate: Date;
 		constructor(@Inject date: Date) {
 			this.injectedDate = date;
 		}
@@ -325,20 +325,20 @@ describe("The IoC Container.get(source)", () => {
 describe("The IoC Container.getType(source)", () => {
 
 	abstract class ITest {
-		public abstract testValue: string;
+		abstract testValue: string;
 	}
 
 	class Test implements ITest {
-		public testValue: string = "success";
+		testValue: string = "success";
 	}
 
 
 	class TestNoProvider {
-		public testValue: string = "success";
+		testValue: string = "success";
 	}
 
 	class TypeNotRegistered {
-		public testValue: string = "success";
+		testValue: string = "success";
 	}
 
 	Container.bind(ITest).to(Test);
@@ -464,17 +464,17 @@ describe("The IoC Container", () => {
 describe("The IoC Container Config.to()", () => {
 
 	abstract class FirstClass {
-		public abstract getValue(): string;
+		abstract getValue(): string;
 	}
 
 	class SecondClass extends FirstClass {
-		public getValue(): string {
+		getValue(): string {
 			return 'second';
 		}
 	}
 
 	class ThirdClass extends FirstClass {
-		public getValue(): string {
+		getValue(): string {
 			return 'third';
 		}
 	}

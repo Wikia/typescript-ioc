@@ -15,13 +15,14 @@
     ],
     "only-arrow-functions": false,
     "interface-name": false,
-    "max-classes-per-file": false,
+    "max-classes-per-file": true,
     "no-var-requires": false,
     "ban-types": false,
     "no-unused-expression": true,
     "semicolon": [
       true,
       "always"
-    ]
+    ],
+    "member-access": [true, "no-public"]
   }
 }

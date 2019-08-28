@@ -5,14 +5,14 @@ import { checkType } from './utils';
  * Internal implementation of IoC Container.
  */
 export class IoCContainer {
-  public static isBound(source: Function): boolean {
+  static isBound(source: Function): boolean {
     checkType(source);
     const baseSource = source as FunctionConstructor;
     const config: ConfigImpl = IoCContainer.bindings.get(baseSource);
     return (!!config);
   }
 
-  public static bind(source: Function): Config {
+  static bind(source: Function): Config {
     checkType(source);
     const baseSource = source as FunctionConstructor;
     let config: ConfigImpl = IoCContainer.bindings.get(baseSource);
@@ -23,7 +23,7 @@ export class IoCContainer {
     return config;
   }
 
-  public static get(source: Function) {
+  static get(source: Function) {
     const config: ConfigImpl = IoCContainer.bind(source) as ConfigImpl;
     if (!config.iocprovider) {
       config.to(config.source as FunctionConstructor);
@@ -31,7 +31,7 @@ export class IoCContainer {
     return config.getInstance();
   }
 
-  public static getType(source: Function): Function {
+  static getType(source: Function): Function {
     checkType(source);
     const baseSource = source as FunctionConstructor;
     const config: ConfigImpl = IoCContainer.bindings.get(baseSource);
@@ -41,7 +41,7 @@ export class IoCContainer {
     return config.targetSource || config.source;
   }
 
-  public static injectProperty(target: Function, key: string, propertyType: Function) {
+  static injectProperty(target: Function, key: string, propertyType: Function) {
     const propKey = `__${key}`;
     Object.defineProperty(target.prototype, key, {
       enumerable: true,
