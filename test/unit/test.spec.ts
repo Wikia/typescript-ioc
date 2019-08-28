@@ -405,12 +405,12 @@ describe("The IoC Container.snapshot(source) and Container.restore(source)", () 
 
 	it("should store the existing service and overwrite with new service with scope", () => {
 
-		Container.bind(IService).to(Service).scope(Scope.Local);
+		Container.bind(IService).to(Service).scope(Scope.Transient);
 
 		expect(Container.get(IService)).to.instanceof(Service);
 
 		Container.snapshot(IService);
-		Container.bind(IService).to(MockService).scope(Scope.Local);
+		Container.bind(IService).to(MockService).scope(Scope.Transient);
 
 		expect(Container.get(IService)).to.instanceof(MockService);
 	});
@@ -452,10 +452,10 @@ describe("The IoC Container", () => {
 		expect(instance).to.exist;
 	});
 
-	it("should allow scope change to Local from Singleton.", () => {
+	it("should allow scope change to Transient from Singleton.", () => {
 		const instance: SingletonInstantiation = Container.get(SingletonInstantiation);
 		expect(instance).to.exist;
-		Container.bind(SingletonInstantiation).scope(Scope.Local);
+		Container.bind(SingletonInstantiation).scope(Scope.Transient);
 		const instance2: SingletonInstantiation = new SingletonInstantiation();
 		expect(instance2).to.exist;
 	});

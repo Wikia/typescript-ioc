@@ -5,11 +5,11 @@ import { Provider } from './provider';
  */
 export abstract class Scope {
   /**
-   * A reference to the LocalScope. Local Scope return a new instance for each dependency resolution requested.
+   * A reference to the TransientScope. Transient Scope return a new instance for each dependency resolution requested.
    * This is the default scope.
    */
     // tslint:disable-next-line:variable-name
-  public static Local: Scope;
+  public static Transient: Scope;
   /**
    * A reference to the SingletonScope. Singleton Scope return the same instance for any
    * dependency resolution requested.
@@ -38,7 +38,7 @@ export abstract class Scope {
 /**
  * Default [[Scope]] that always create a new instace for any dependency resolution request
  */
-class LocalScope extends Scope {
+class TransientScope extends Scope {
   public resolve(provider: Provider, source: Function) {
     return provider.get();
   }
@@ -66,6 +66,6 @@ class SingletonScope extends Scope {
   }
 }
 
-Scope.Local = new LocalScope();
+Scope.Transient = new TransientScope();
 
 Scope.Singleton = new SingletonScope();
