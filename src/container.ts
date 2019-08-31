@@ -4,10 +4,8 @@
  * Visit the project page on [GitHub] (https://github.com/thiagobustamante/typescript-ioc).
  */
 import 'reflect-metadata';
-import { Config, ConfigImpl } from './config';
+import { Config } from './config';
 import { IoCContainer } from './ioc-container';
-import { Provider } from './provider';
-import { Scope } from './scope';
 
 /**
  * The IoC Container class. Can be used to register and to retrieve your dependencies.
@@ -15,15 +13,6 @@ import { Scope } from './scope';
  * to configure the dependency directly on the class.
  */
 export class Container {
-    /**
-     * Internal storage for snapshots
-     * @type {providers: Map<Function, Provider>; scopes: Map<Function, Scope>}
-     */
-    private snapshots: { providers: Map<Function, Provider>; scopes: Map<Function, Scope> } = {
-        providers: new Map(),
-        scopes: new Map(),
-    };
-
     /**
      * Add a dependency to the Container. If this type is already present, just return its associated
      * configuration object.
@@ -61,34 +50,6 @@ export class Container {
      */
     getType(source: Function) {
         return IoCContainer.getType(source);
-    }
-
-    /**
-     * Store the state for a specified binding.  Can then be restored later.   Useful for testing.
-     * @param source The dependency type
-     */
-    snapshot(source: Function): void {
-        const config = this.bind(source) as ConfigImpl;
-        this.snapshots.providers.set(source, config.iocprovider);
-        if (config.iocscope) {
-            this.snapshots.scopes.set(source, config.iocscope);
-        }
-        return;
-    }
-
-    /**
-     * Restores the state for a specified binding that was previously captured by snapshot.
-     * @param source The dependency type
-     */
-    restore(source: Function): void {
-        if (!(this.snapshots.providers.has(source))) {
-            throw new TypeError('Config for source was never snapshoted.');
-        }
-        const config = this.bind(source);
-        config.provider(this.snapshots.providers.get(source));
-        if (this.snapshots.scopes.has(source)) {
-            config.scope(this.snapshots.scopes.get(source));
-        }
     }
 }
 
