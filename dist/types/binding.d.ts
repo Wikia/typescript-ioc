@@ -1,13 +1,13 @@
 import { ContainerEngine } from './container-engine';
 import { Provider } from './provider';
 import { Scope } from './scope';
-export interface Config {
+export interface Binding {
     to(target: Object): this;
     provider(provider: Provider): this;
     scope(scope: Scope): this;
     withParams(...paramTypes: any[]): this;
 }
-export declare class ConfigImpl implements Config {
+export declare class BindingImpl implements Binding {
     private source;
     private engine;
     iocprovider: Provider;

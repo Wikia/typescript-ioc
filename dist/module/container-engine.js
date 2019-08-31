@@ -1,4 +1,4 @@
-import { ConfigImpl } from './config';
+import { BindingImpl } from './binding';
 import { checkType } from './utils';
 var ContainerEngine = (function () {
     function ContainerEngine() {
@@ -15,7 +15,7 @@ var ContainerEngine = (function () {
         var baseSource = source;
         var config = this.bindings.get(baseSource);
         if (!config) {
-            config = new ConfigImpl(baseSource, this);
+            config = new BindingImpl(baseSource, this);
             this.bindings.set(baseSource, config);
         }
         return config;

@@ -4,7 +4,7 @@
  * Visit the project page on [GitHub] (https://github.com/thiagobustamante/typescript-ioc).
  */
 import 'reflect-metadata';
-import { Config } from './config';
+import { Binding } from './binding';
 import { ContainerEngine } from './container-engine';
 
 /**
@@ -26,7 +26,7 @@ export class Container {
      * @param source The type that will be bound to the Container
      * @return a container configuration
      */
-    bind(source: Function): Config {
+    bind(source: Function): Binding {
         if (!this.engine.isBound(source)) {
             return this.engine.bind(source).to(source as FunctionConstructor);
         }

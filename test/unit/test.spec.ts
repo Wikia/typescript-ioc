@@ -225,7 +225,7 @@ describe('The IoC container.snapshot(source) and container.restore(source)', () 
 
   it('should throw TypeError if you try to restore a type which has not been snapshotted', () => {
     expect(function () { container.restore(IService); })
-      .to.throw(TypeError, 'Config for source was never snapshoted.');
+      .to.throw(TypeError, 'Binding for source was never snapshoted.');
   });
 
   it('should store the existing service and overwrite with new service without scope', () => {
@@ -291,7 +291,7 @@ describe('The IoC Container', () => {
   });
 });
 
-describe('The IoC Container Config.to()', () => {
+describe('The IoC Container Binding.to()', () => {
 
   abstract class FirstClass {
     abstract getValue(): string;

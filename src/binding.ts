@@ -7,7 +7,7 @@ import { checkType } from './utils';
 /**
  * A bind configuration for a given type in the IoC Container.
  */
-export interface Config {
+export interface Binding {
   /**
    * Inform a given implementation type to be used when a dependency for the source type is requested.
    * @param target The implementation type
@@ -33,7 +33,7 @@ export interface Config {
   withParams(...paramTypes: any[]): this;
 }
 
-export class ConfigImpl implements Config {
+export class BindingImpl implements Binding {
   iocprovider: Provider;
   private targetSource: Function;
   private iocscope: Scope;

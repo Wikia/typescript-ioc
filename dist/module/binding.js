@@ -1,15 +1,15 @@
 import { METADATA_KEY } from './metadata-keys';
 import { Scope } from './scope';
 import { checkType } from './utils';
-var ConfigImpl = (function () {
-    function ConfigImpl(source, engine) {
+var BindingImpl = (function () {
+    function BindingImpl(source, engine) {
         this.source = source;
         this.engine = engine;
     }
-    ConfigImpl.prototype.toSelf = function () {
+    BindingImpl.prototype.toSelf = function () {
         return this.to(this.source);
     };
-    ConfigImpl.prototype.to = function (target) {
+    BindingImpl.prototype.to = function (target) {
         var _this = this;
         checkType(target);
         this.targetSource = target;
@@ -34,19 +34,19 @@ var ConfigImpl = (function () {
         }
         return this;
     };
-    ConfigImpl.prototype.getParameters = function () {
+    BindingImpl.prototype.getParameters = function () {
         var _this = this;
         var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
         return paramTypes.map(function (paramType) { return _this.engine.get(paramType); });
     };
-    ConfigImpl.prototype.provider = function (provider) {
+    BindingImpl.prototype.provider = function (provider) {
         this.iocprovider = provider;
         if (this.iocscope) {
             this.iocscope.reset(this.source);
         }
         return this;
     };
-    ConfigImpl.prototype.scope = function (scope) {
+    BindingImpl.prototype.scope = function (scope) {
         this.iocscope = scope;
         if (scope === Scope.Singleton) {
             this.source['__block_Instantiation'] = true;
@@ -57,7 +57,7 @@ var ConfigImpl = (function () {
         }
         return this;
     };
-    ConfigImpl.prototype.withParams = function () {
+    BindingImpl.prototype.withParams = function () {
         var paramTypes = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             paramTypes[_i] = arguments[_i];
@@ -65,16 +65,16 @@ var ConfigImpl = (function () {
         this.paramTypes = paramTypes;
         return this;
     };
-    ConfigImpl.prototype.getInstance = function () {
+    BindingImpl.prototype.getInstance = function () {
         if (!this.iocscope) {
             this.scope(Scope.Singleton);
         }
         return this.iocscope.resolve(this.iocprovider, this.source);
     };
-    ConfigImpl.prototype.getType = function () {
+    BindingImpl.prototype.getType = function () {
         return this.targetSource || this.source;
     };
-    return ConfigImpl;
+    return BindingImpl;
 }());
-export { ConfigImpl };
-//# sourceMappingURL=config.js.map
+export { BindingImpl };
+//# sourceMappingURL=binding.js.map
