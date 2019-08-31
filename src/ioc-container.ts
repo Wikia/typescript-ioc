@@ -5,6 +5,8 @@ import { checkType } from './utils';
  * Internal implementation of IoC Container.
  */
 export class IoCContainer {
+  private static bindings: Map<FunctionConstructor, ConfigImpl> = new Map<FunctionConstructor, ConfigImpl>();
+
   static isBound(source: Function): boolean {
     checkType(source);
     const baseSource = source as FunctionConstructor;
@@ -40,6 +42,4 @@ export class IoCContainer {
     }
     return config.targetSource || config.source;
   }
-
-  private static bindings: Map<FunctionConstructor, ConfigImpl> = new Map<FunctionConstructor, ConfigImpl>();
 }

@@ -12,25 +12,25 @@ export interface Config {
    * Inform a given implementation type to be used when a dependency for the source type is requested.
    * @param target The implementation type
    */
-  to(target: Object): Config;
+  to(target: Object): this;
 
   /**
    * Inform a provider to be used to create instances when a dependency for the source type is requested.
    * @param provider The provider to create instances
    */
-  provider(provider: Provider): Config;
+  provider(provider: Provider): this;
 
   /**
    * Inform a scope to handle the instances for objects created by the Container for this binding.
    * @param scope Scope to handle instances
    */
-  scope(scope: Scope): Config;
+  scope(scope: Scope): this;
 
   /**
    * Inform the types to be retrieved from IoC Container and passed to the type constructor.
    * @param paramTypes A list with parameter types.
    */
-  withParams(...paramTypes: Array<any>): Config;
+  withParams(...paramTypes: any[]): this;
 }
 
 export class ConfigImpl implements Config {
@@ -38,13 +38,13 @@ export class ConfigImpl implements Config {
   targetSource: Function;
   iocprovider: Provider;
   iocscope: Scope;
-  private paramTypes: Array<any>;
+  private paramTypes: any[];
 
   constructor(source: Function) {
     this.source = source;
   }
 
-  to(target: FunctionConstructor) {
+  to(target: FunctionConstructor): this {
     checkType(target);
     const targetSource = target as FunctionConstructor;
     this.targetSource = targetSource;
@@ -70,7 +70,13 @@ export class ConfigImpl implements Config {
     return this;
   }
 
-  provider(provider: Provider) {
+  private getParameters(): any[] {
+    const paramTypes: any[] = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
+
+    return paramTypes.map(paramType => IoCContainer.get(paramType));
+  }
+
+  provider(provider: Provider): this {
     this.iocprovider = provider;
     if (this.iocscope) {
       this.iocscope.reset(this.source);
@@ -78,7 +84,7 @@ export class ConfigImpl implements Config {
     return this;
   }
 
-  scope(scope: Scope) {
+  scope(scope: Scope): this {
     this.iocscope = scope;
     if (scope === Scope.Singleton) {
       (this as any).source['__block_Instantiation'] = true;
@@ -89,7 +95,7 @@ export class ConfigImpl implements Config {
     return this;
   }
 
-  withParams(...paramTypes: Array<any>) {
+  withParams(...paramTypes: any[]): this {
     this.paramTypes = paramTypes;
     return this;
   }
@@ -99,11 +105,5 @@ export class ConfigImpl implements Config {
       this.scope(Scope.Singleton);
     }
     return this.iocscope.resolve(this.iocprovider, this.source);
-  }
-
-  private getParameters() {
-    const paramTypes: Array<any> = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
-
-    return paramTypes.map(paramType => IoCContainer.get(paramType));
   }
 }

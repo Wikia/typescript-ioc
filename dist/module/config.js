@@ -31,6 +31,10 @@ var ConfigImpl = (function () {
         }
         return this;
     };
+    ConfigImpl.prototype.getParameters = function () {
+        var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
+        return paramTypes.map(function (paramType) { return IoCContainer.get(paramType); });
+    };
     ConfigImpl.prototype.provider = function (provider) {
         this.iocprovider = provider;
         if (this.iocscope) {
@@ -62,10 +66,6 @@ var ConfigImpl = (function () {
             this.scope(Scope.Singleton);
         }
         return this.iocscope.resolve(this.iocprovider, this.source);
-    };
-    ConfigImpl.prototype.getParameters = function () {
-        var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
-        return paramTypes.map(function (paramType) { return IoCContainer.get(paramType); });
     };
     return ConfigImpl;
 }());

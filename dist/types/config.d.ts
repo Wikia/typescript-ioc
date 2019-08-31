@@ -1,10 +1,10 @@
 import { Provider } from './provider';
 import { Scope } from './scope';
 export interface Config {
-    to(target: Object): Config;
-    provider(provider: Provider): Config;
-    scope(scope: Scope): Config;
-    withParams(...paramTypes: Array<any>): Config;
+    to(target: Object): this;
+    provider(provider: Provider): this;
+    scope(scope: Scope): this;
+    withParams(...paramTypes: any[]): this;
 }
 export declare class ConfigImpl implements Config {
     source: Function;
@@ -14,9 +14,9 @@ export declare class ConfigImpl implements Config {
     private paramTypes;
     constructor(source: Function);
     to(target: FunctionConstructor): this;
+    private getParameters;
     provider(provider: Provider): this;
     scope(scope: Scope): this;
-    withParams(...paramTypes: Array<any>): this;
+    withParams(...paramTypes: any[]): this;
     getInstance(): any;
-    private getParameters;
 }
