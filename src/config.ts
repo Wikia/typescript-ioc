@@ -37,7 +37,6 @@ export class ConfigImpl implements Config {
   targetSource: Function;
   iocprovider: Provider;
   iocscope: Scope;
-  decoratedConstructor: FunctionConstructor;
   paramTypes: Array<any>;
 
   constructor(source: Function) {
@@ -53,9 +52,7 @@ export class ConfigImpl implements Config {
       this.iocprovider = {
         get: () => {
           const params = configImpl.getParameters();
-          if (configImpl.decoratedConstructor) {
-            return (params ? new configImpl.decoratedConstructor(...params) : new configImpl.decoratedConstructor());
-          }
+
           return (params ? new target(...params) : new target());
         }
       };
@@ -93,11 +90,6 @@ export class ConfigImpl implements Config {
 
   withParams(...paramTypes: Array<any>) {
     this.paramTypes = paramTypes;
-    return this;
-  }
-
-  toConstructor(newConstructor: FunctionConstructor) {
-    this.decoratedConstructor = newConstructor;
     return this;
   }
 
