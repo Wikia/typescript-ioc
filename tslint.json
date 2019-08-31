@@ -6,7 +6,7 @@
   "rules": {
     "array-type": [
       true,
-      "generic"
+      "array"
     ],
     "no-string-literal": false,
     "object-literal-shorthand": [
@@ -23,6 +23,18 @@
       true,
       "always"
     ],
-    "member-access": [true, "no-public"]
+    "member-access": [true, "no-public"],
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "static-field",
+          "static-method",
+          "instance-field",
+          "constructor",
+          "instance-method"
+        ]
+      }
+    ]
   }
 }

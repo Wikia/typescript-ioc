@@ -1,10 +1,8 @@
 import 'reflect-metadata';
-import { Config } from './config';
+import { Binding } from './binding';
 export declare class Container {
-    private snapshots;
-    bind(source: Function): Config;
+    private container;
+    bind(source: Function): Binding;
     get<T extends Function>(source: T): T[keyof T];
     getType(source: Function): Function;
-    snapshot(source: Function): void;
-    restore(source: Function): void;
 }

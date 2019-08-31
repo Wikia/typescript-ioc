@@ -3,81 +3,35 @@ import * as chai from 'chai';
 import 'mocha';
 import 'reflect-metadata';
 import { Container } from '../../src/container';
-import { Inject } from '../../src/decorators';
+import { Injectable } from '../../src/decorators';
 import { Scope } from '../../src/scope';
 
 const container = new Container();
 const expect = chai.expect;
 
-// tslint:disable:no-unused-expression
-describe('@Inject annotation on a property', () => {
-
-  class SimpleInject {
-    @Inject dateProperty: Date;
-  }
-
-  class ConstructorSimpleInject {
-    @Inject aDateProperty: Date;
-
-    testOK: boolean;
-
-    constructor() {
-      if (this.aDateProperty) {
-        this.testOK = true;
-      }
-    }
-  }
-
-  abstract class AbsClass {
-    constructor(public date: Date) { }
-  }
-
-  class ConstructorInjected extends AbsClass {
-    constructor(@Inject public anotherDate: Date) {
-      super(anotherDate);
-    }
-  }
-
-  it('should inject a new value on the property field', () => {
-    const instance: SimpleInject = new SimpleInject();
-    expect(instance.dateProperty).to.exist;
-  });
-
-  it('should inject a new value on the property field that is accessible inside class constructor', () => {
-    const instance: ConstructorSimpleInject = new ConstructorSimpleInject();
-    expect(instance.testOK).to.equal(true);
-  });
-
-  it('should inject a new value on the property field that is injected into constructor', () => {
-    const instance: ConstructorInjected = container.get(ConstructorInjected);
-    expect(instance.anotherDate).to.exist;
-    expect(instance.date).to.exist;
-    expect(instance.date).to.equal(instance.anotherDate);
-  });
-});
 
 describe('@Inject annotation on Constructor parameter', () => {
-  const constructorsArgs: Array<any> = new Array<any>();
-  const constructorsMultipleArgs: Array<any> = new Array<any>();
+  const constructorsArgs: any[] = new Array<any>();
+  const constructorsMultipleArgs: any[] = new Array<any>();
 
+  @Injectable()
   class TestConstructor {
     injectedDate: Date;
 
-    constructor(@Inject date: Date) {
+    constructor(date: Date) {
       constructorsArgs.push(date);
       this.injectedDate = date;
     }
   }
 
+  @Injectable()
   class TestConstructor2 {
-    @Inject
-    teste1: TestConstructor;
+    constructor(public teste1?: TestConstructor) {}
   }
 
-  it('should inject a new value as argument on cosntrutor call, when parameter is not provided', () => {
+  it('should not inject a new value as argument on cosntrutor call, when parameter is not provided', () => {
     const instance: TestConstructor2 = new TestConstructor2();
-    expect(instance.teste1.injectedDate).to.exist;
-    expect(constructorsArgs.length).to.equal(1);
+    expect(instance.teste1).to.not.exist;
   });
 
   it('should not inject a new value as argument on cosntrutor call, when parameter is provided', () => {
@@ -86,15 +40,18 @@ describe('@Inject annotation on Constructor parameter', () => {
     expect(instance.injectedDate).to.equals(myDate);
   });
 
-
+  @Injectable()
   class Aaaa {}
 
+  @Injectable()
   class Bbbb {}
 
+  @Injectable()
   class Cccc {}
 
+  @Injectable()
   class Dddd {
-    constructor(@Inject a: Aaaa, @Inject b: Bbbb, @Inject c: Cccc) {
+    constructor(a: Aaaa, b: Bbbb, c: Cccc) {
       constructorsMultipleArgs.push(a);
       constructorsMultipleArgs.push(b);
       constructorsMultipleArgs.push(c);
@@ -117,9 +74,9 @@ describe('Default Implementation class', () => {
   class BaseClass {
   }
 
+  @Injectable()
   class ImplementationClass implements BaseClass {
-    @Inject
-    testProp: Date;
+    constructor(public testProp: Date) {}
   }
 
   it('should inform Container that it is the implementation for its base type', () => {
@@ -132,9 +89,9 @@ describe('Default Implementation class', () => {
 
 describe('The IoC container.bind(source)', () => {
 
+  @Injectable()
   class ContainerInjectTest {
-    @Inject
-    dateProperty: Date;
+    constructor(public dateProperty?: Date) {}
   }
 
   container.bind(ContainerInjectTest);
@@ -144,18 +101,19 @@ describe('The IoC container.bind(source)', () => {
     expect(instance.dateProperty).to.exist;
   });
 
-  it('should inject internal fields of non AutoWired classes, if it is created by its constructor', () => {
+  it('should not inject internal fields of non AutoWired classes, if it is created by its constructor', () => {
     const instance: ContainerInjectTest = new ContainerInjectTest();
-    expect(instance.dateProperty).to.exist;
+    expect(instance.dateProperty).to.not.exist;
   });
 });
 
 describe('The IoC container.get(source)', () => {
 
+  @Injectable()
   class ContainerInjectConstructorTest {
     injectedDate: Date;
 
-    constructor(@Inject date: Date) {
+    constructor(date: Date) {
       this.injectedDate = date;
     }
   }
@@ -170,19 +128,22 @@ describe('The IoC container.get(source)', () => {
 
 describe('The IoC container.getType(source)', () => {
 
+  @Injectable()
   abstract class ITest {
     abstract testValue: string;
   }
 
+  @Injectable()
   class Test implements ITest {
     testValue: string = 'success';
   }
 
-
+  @Injectable()
   class TestNoProvider {
     testValue: string = 'success';
   }
 
+  @Injectable()
   class TypeNotRegistered {
     testValue: string = 'success';
   }
@@ -207,62 +168,6 @@ describe('The IoC container.getType(source)', () => {
     }
   });
 
-});
-
-describe('The IoC container.snapshot(source) and container.restore(source)', () => {
-
-  abstract class IService {
-  }
-
-  class Service implements IService {
-  }
-
-  class MockService implements IService {
-  }
-
-  container.bind(IService)
-    .to(Service);
-
-  it('should throw TypeError if you try to restore a type which has not been snapshotted', () => {
-    expect(function () { container.restore(IService); })
-      .to.throw(TypeError, 'Config for source was never snapshoted.');
-  });
-
-  it('should store the existing service and overwrite with new service without scope', () => {
-
-    expect(container.get(IService)).to.instanceof(Service);
-
-    container.snapshot(IService);
-    container.bind(IService).to(MockService);
-
-    expect(container.get(IService)).to.instanceof(MockService);
-  });
-
-  it('should revert the service to the saved config without scope', () => {
-
-    container.restore(IService);
-
-    expect(container.get(IService)).instanceof(Service);
-  });
-
-  it('should store the existing service and overwrite with new service with scope', () => {
-
-    container.bind(IService).to(Service).scope(Scope.Transient);
-
-    expect(container.get(IService)).to.instanceof(Service);
-
-    container.snapshot(IService);
-    container.bind(IService).to(MockService).scope(Scope.Transient);
-
-    expect(container.get(IService)).to.instanceof(MockService);
-  });
-
-  it('should revert the service to the saved config with scope', () => {
-
-    container.restore(IService);
-
-    expect(container.get(IService)).instanceof(Service);
-  });
 });
 
 describe('The IoC Container', () => {
@@ -291,7 +196,7 @@ describe('The IoC Container', () => {
   });
 });
 
-describe('The IoC Container Config.to()', () => {
+describe('The IoC Container Binding.to()', () => {
 
   abstract class FirstClass {
     abstract getValue(): string;

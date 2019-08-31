@@ -1,41 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var ioc_container_1 = require("./ioc-container");
-function Scoped(scope) {
+var metadata_keys_1 = require("./metadata-keys");
+function Injectable() {
     return function (target) {
-        ioc_container_1.IoCContainer.bind(target).scope(scope);
+        if (Reflect.hasOwnMetadata(metadata_keys_1.METADATA_KEY.PARAM_TYPES, target)) {
+            throw new Error('Already defined');
+        }
+        var types = Reflect.getMetadata(metadata_keys_1.METADATA_KEY.DESIGN_PARAM_TYPES, target) || [];
+        Reflect.defineMetadata(metadata_keys_1.METADATA_KEY.PARAM_TYPES, types, target);
+        return target;
     };
 }
-exports.Scoped = Scoped;
-function Provided(provider) {
-    return function (target) {
-        ioc_container_1.IoCContainer.bind(target).provider(provider);
-    };
-}
-exports.Provided = Provided;
-function Inject(target, targetKey, index) {
-    if (typeof index === 'undefined') {
-        return InjectPropertyDecorator.apply(this, [target, targetKey]);
-    }
-    else if (typeof index === 'number') {
-        return InjectParamDecorator.apply(this, [target, targetKey, index]);
-    }
-    throw new Error('Invalid @Inject Decorator declaration.');
-}
-exports.Inject = Inject;
-function InjectPropertyDecorator(target, targetKey) {
-    var t = Reflect.getMetadata('design:type', target, targetKey);
-    if (!t) {
-        t = Reflect.getMetadata('design:type', target.constructor, targetKey);
-    }
-    ioc_container_1.IoCContainer.injectProperty(target.constructor, targetKey, t);
-}
-function InjectParamDecorator(target, targetKey, index) {
-    if (!targetKey) {
-        var config = ioc_container_1.IoCContainer.bind(target);
-        config.paramTypes = config.paramTypes || [];
-        var paramTypes = Reflect.getMetadata('design:paramtypes', target);
-        config.paramTypes.unshift(paramTypes[index]);
-    }
-}
+exports.Injectable = Injectable;
 //# sourceMappingURL=decorators.js.map
