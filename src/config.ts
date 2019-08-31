@@ -1,4 +1,4 @@
-import { IoCContainer } from './ioc-container';
+import { ContainerEngine } from './container-engine';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { Scope } from './scope';
@@ -36,17 +36,15 @@ export interface Config {
 export class ConfigImpl implements Config {
   targetSource: Function;
   iocprovider: Provider;
-  iocscope: Scope;
+  private iocscope: Scope;
   private paramTypes: any[];
 
-  constructor(public source: Function) {
-  }
+  constructor(public source: Function, private engine: ContainerEngine) {}
 
   to(target: FunctionConstructor): this {
     checkType(target);
-    const targetSource = target as FunctionConstructor;
-    this.targetSource = targetSource;
-    if (this.source === targetSource) {
+    this.targetSource = target;
+    if (this.source === this.targetSource) {
       const configImpl = this;
       this.iocprovider = {
         get: () => {
@@ -58,7 +56,7 @@ export class ConfigImpl implements Config {
     } else {
       this.iocprovider = {
         get: () => {
-          return IoCContainer.get(target);
+          return this.engine.get(target);
         }
       };
     }
@@ -71,7 +69,7 @@ export class ConfigImpl implements Config {
   private getParameters(): any[] {
     const paramTypes: any[] = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
 
-    return paramTypes.map(paramType => IoCContainer.get(paramType));
+    return paramTypes.map(paramType => this.engine.get(paramType));
   }
 
   provider(provider: Provider): this {

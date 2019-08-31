@@ -5,7 +5,7 @@
  */
 import 'reflect-metadata';
 import { Config } from './config';
-import { IoCContainer } from './ioc-container';
+import { ContainerEngine } from './container-engine';
 
 /**
  * The IoC Container class. Can be used to register and to retrieve your dependencies.
@@ -13,6 +13,8 @@ import { IoCContainer } from './ioc-container';
  * to configure the dependency directly on the class.
  */
 export class Container {
+    private engine = new ContainerEngine();
+
     /**
      * Add a dependency to the Container. If this type is already present, just return its associated
      * configuration object.
@@ -25,11 +27,11 @@ export class Container {
      * @return a container configuration
      */
     bind(source: Function): Config {
-        if (!IoCContainer.isBound(source)) {
-            return IoCContainer.bind(source).to(source);
+        if (!this.engine.isBound(source)) {
+            return this.engine.bind(source).to(source as FunctionConstructor);
         }
 
-        return IoCContainer.bind(source);
+        return this.engine.bind(source);
     }
 
     /**
@@ -40,7 +42,7 @@ export class Container {
      * @return an object resolved for the given source type;
      */
     get<T extends Function>(source: T): T[keyof T] {
-        return IoCContainer.get(source);
+        return this.engine.get(source);
     }
 
     /**
@@ -48,8 +50,8 @@ export class Container {
      * @param source The dependency type to resolve
      * @return an object resolved for the given source type;
      */
-    getType(source: Function) {
-        return IoCContainer.getType(source);
+    getType(source: Function): Function {
+        return this.engine.getType(source);
     }
 }
 

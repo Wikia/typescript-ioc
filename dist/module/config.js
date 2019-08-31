@@ -1,16 +1,16 @@
-import { IoCContainer } from './ioc-container';
 import { METADATA_KEY } from './metadata-keys';
 import { Scope } from './scope';
 import { checkType } from './utils';
 var ConfigImpl = (function () {
-    function ConfigImpl(source) {
+    function ConfigImpl(source, engine) {
         this.source = source;
+        this.engine = engine;
     }
     ConfigImpl.prototype.to = function (target) {
+        var _this = this;
         checkType(target);
-        var targetSource = target;
-        this.targetSource = targetSource;
-        if (this.source === targetSource) {
+        this.targetSource = target;
+        if (this.source === this.targetSource) {
             var configImpl_1 = this;
             this.iocprovider = {
                 get: function () {
@@ -22,7 +22,7 @@ var ConfigImpl = (function () {
         else {
             this.iocprovider = {
                 get: function () {
-                    return IoCContainer.get(target);
+                    return _this.engine.get(target);
                 }
             };
         }
@@ -32,8 +32,9 @@ var ConfigImpl = (function () {
         return this;
     };
     ConfigImpl.prototype.getParameters = function () {
+        var _this = this;
         var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
-        return paramTypes.map(function (paramType) { return IoCContainer.get(paramType); });
+        return paramTypes.map(function (paramType) { return _this.engine.get(paramType); });
     };
     ConfigImpl.prototype.provider = function (provider) {
         this.iocprovider = provider;
