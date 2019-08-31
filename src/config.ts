@@ -1,4 +1,5 @@
 import { IoCContainer } from './ioc-container';
+import { PARAM_TYPES } from './metadata-keys';
 import { Provider } from './provider';
 import { Scope } from './scope';
 import { checkType } from './utils';
@@ -37,7 +38,7 @@ export class ConfigImpl implements Config {
   targetSource: Function;
   iocprovider: Provider;
   iocscope: Scope;
-  paramTypes: Array<any>;
+  private paramTypes: Array<any>;
 
   constructor(source: Function) {
     this.source = source;
@@ -53,7 +54,7 @@ export class ConfigImpl implements Config {
         get: () => {
           const params = configImpl.getParameters();
 
-          return (params ? new target(...params) : new target());
+          return new target(...params);
         }
       };
     } else {
@@ -101,9 +102,8 @@ export class ConfigImpl implements Config {
   }
 
   private getParameters() {
-    if (this.paramTypes) {
-      return this.paramTypes.map(paramType => IoCContainer.get(paramType));
-    }
-    return null;
+    const paramTypes: Array<any> = this.paramTypes || Reflect.getMetadata(PARAM_TYPES, this.targetSource) || [];
+
+    return paramTypes.map(paramType => IoCContainer.get(paramType));
   }
 }
