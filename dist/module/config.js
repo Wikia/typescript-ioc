@@ -6,6 +6,9 @@ var ConfigImpl = (function () {
         this.source = source;
         this.engine = engine;
     }
+    ConfigImpl.prototype.toSelf = function () {
+        return this.to(this.source);
+    };
     ConfigImpl.prototype.to = function (target) {
         var _this = this;
         checkType(target);
@@ -67,6 +70,9 @@ var ConfigImpl = (function () {
             this.scope(Scope.Singleton);
         }
         return this.iocscope.resolve(this.iocprovider, this.source);
+    };
+    ConfigImpl.prototype.getType = function () {
+        return this.targetSource || this.source;
     };
     return ConfigImpl;
 }());

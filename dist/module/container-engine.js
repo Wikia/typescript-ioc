@@ -23,7 +23,7 @@ var ContainerEngine = (function () {
     ContainerEngine.prototype.get = function (source) {
         var config = this.bind(source);
         if (!config.iocprovider) {
-            config.to(config.source);
+            config.toSelf();
         }
         return config.getInstance();
     };
@@ -34,7 +34,7 @@ var ContainerEngine = (function () {
         if (!config) {
             throw new TypeError("The type " + source.name + " hasn't been registered with the IOC Container");
         }
-        return config.targetSource || config.source;
+        return config.getType();
     };
     return ContainerEngine;
 }());

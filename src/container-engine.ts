@@ -28,7 +28,7 @@ export class ContainerEngine {
   get<T extends Function>(source: T): T[keyof T] {
     const config: ConfigImpl = this.bind(source);
     if (!config.iocprovider) {
-      config.to(config.source as FunctionConstructor);
+      config.toSelf();
     }
     return config.getInstance();
   }
@@ -40,6 +40,6 @@ export class ContainerEngine {
     if (!config) {
       throw new TypeError(`The type ${source.name} hasn't been registered with the IOC Container`);
     }
-    return config.targetSource || config.source;
+    return config.getType();
   }
 }

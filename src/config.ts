@@ -34,12 +34,16 @@ export interface Config {
 }
 
 export class ConfigImpl implements Config {
-  targetSource: Function;
   iocprovider: Provider;
+  private targetSource: Function;
   private iocscope: Scope;
   private paramTypes: any[];
 
-  constructor(public source: Function, private engine: ContainerEngine) {}
+  constructor(private source: Function, private engine: ContainerEngine) {}
+
+  toSelf(): this {
+    return this.to(this.source as FunctionConstructor);
+  }
 
   to(target: FunctionConstructor): this {
     checkType(target);
@@ -101,5 +105,9 @@ export class ConfigImpl implements Config {
       this.scope(Scope.Singleton);
     }
     return this.iocscope.resolve(this.iocprovider, this.source);
+  }
+
+  getType(): Function {
+    return this.targetSource || this.source;
   }
 }
