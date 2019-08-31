@@ -1,6 +1,5 @@
 import { ConfigImpl } from './config';
 import { IoCContainer } from './ioc-container';
-import { Provider } from './provider';
 import { Scope } from './scope';
 
 /**
@@ -33,29 +32,6 @@ export function Scoped(scope: Scope) {
 }
 
 /**
- * A decorator to tell the container that this class should instantiated by the given [[Provider]].
- * For example:
- *
- * ```
- * @ Provided({get: () => { return new PersonDAO(); }})
- * class PersonDAO {
- * }
- * ```
- *
- * Is the same that use:
- *
- * ```
- * Container.bind(PersonDAO).provider({get: () => { return new PersonDAO(); }});
- * ```
- * @param provider The provider that will handle instantiations for this class.
- */
-export function Provided(provider: Provider) {
-  return function (target: Function) {
-    IoCContainer.bind(target).provider(provider);
-  };
-}
-
-/**
  * A decorator to request from Container that it resolve the annotated property dependency.
  * For example:
  *
@@ -82,25 +58,11 @@ export function Provided(provider: Provider) {
  * ```
  */
 export function Inject(target: any, targetKey: string, index?: number) {
-  if (typeof index === 'undefined') {
-    return InjectPropertyDecorator.apply(this, [target, targetKey]);
-  } else if (typeof index === 'number') {
+  if (typeof index === 'number') {
     return InjectParamDecorator.apply(this, [target, targetKey, index]);
   }
 
   throw new Error('Invalid @Inject Decorator declaration.');
-}
-
-/**
- * Decorator processor for [[Inject]] decorator on properties
- */
-function InjectPropertyDecorator(target: Function, targetKey: string) {
-  let t = Reflect.getMetadata('design:type', target, targetKey);
-  if (!t) {
-    // Needed to support react native inheritance
-    t = Reflect.getMetadata('design:type', target.constructor, targetKey);
-  }
-  IoCContainer.injectProperty(target.constructor, targetKey, t);
 }
 
 /**

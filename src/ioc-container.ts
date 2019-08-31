@@ -41,18 +41,5 @@ export class IoCContainer {
     return config.targetSource || config.source;
   }
 
-  static injectProperty(target: Function, key: string, propertyType: Function) {
-    const propKey = `__${key}`;
-    Object.defineProperty(target.prototype, key, {
-      enumerable: true,
-      get: function () {
-        return this[propKey] ? this[propKey] : this[propKey] = IoCContainer.get(propertyType);
-      },
-      set: function (newValue) {
-        this[propKey] = newValue;
-      }
-    });
-  }
-
   private static bindings: Map<FunctionConstructor, ConfigImpl> = new Map<FunctionConstructor, ConfigImpl>();
 }
