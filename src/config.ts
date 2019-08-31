@@ -34,14 +34,12 @@ export interface Config {
 }
 
 export class ConfigImpl implements Config {
-  source: Function;
   targetSource: Function;
   iocprovider: Provider;
   iocscope: Scope;
   private paramTypes: any[];
 
-  constructor(source: Function) {
-    this.source = source;
+  constructor(public source: Function) {
   }
 
   to(target: FunctionConstructor): this {
