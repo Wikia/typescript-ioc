@@ -42,7 +42,7 @@ export class Container {
      * @return an object resolved for the given source type;
      */
     get<T extends Function>(source: T): T[keyof T] {
-        return this.engine.get(source);
+        return this.engine.getInstance(source);
     }
 
     /**

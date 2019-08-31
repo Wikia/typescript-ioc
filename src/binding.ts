@@ -49,10 +49,9 @@ export class BindingImpl implements Binding {
     checkType(target);
     this.targetSource = target;
     if (this.source === this.targetSource) {
-      const configImpl = this;
       this.iocprovider = {
         get: () => {
-          const params = configImpl.getParameters();
+          const params = this.getParameters();
 
           return new target(...params);
         }
@@ -60,7 +59,7 @@ export class BindingImpl implements Binding {
     } else {
       this.iocprovider = {
         get: () => {
-          return this.engine.get(target);
+          return this.engine.getInstance(target);
         }
       };
     }
@@ -73,7 +72,7 @@ export class BindingImpl implements Binding {
   private getParameters(): any[] {
     const paramTypes: any[] = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
 
-    return paramTypes.map(paramType => this.engine.get(paramType));
+    return paramTypes.map(paramType => this.engine.getInstance(paramType));
   }
 
   provider(provider: Provider): this {
