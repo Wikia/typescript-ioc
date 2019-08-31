@@ -4,6 +4,5 @@ export declare class IoCContainer {
     static bind(source: Function): Config;
     static get(source: Function): any;
     static getType(source: Function): Function;
-    static injectProperty(target: Function, key: string, propertyType: Function): void;
     private static bindings;
 }

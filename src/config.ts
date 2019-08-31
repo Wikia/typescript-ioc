@@ -1,5 +1,5 @@
 import { IoCContainer } from './ioc-container';
-import { PARAM_TYPES } from './metadata-keys';
+import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { Scope } from './scope';
 import { checkType } from './utils';
@@ -102,7 +102,7 @@ export class ConfigImpl implements Config {
   }
 
   private getParameters() {
-    const paramTypes: Array<any> = this.paramTypes || Reflect.getMetadata(PARAM_TYPES, this.targetSource) || [];
+    const paramTypes: Array<any> = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
 
     return paramTypes.map(paramType => IoCContainer.get(paramType));
   }

@@ -35,18 +35,6 @@ var IoCContainer = (function () {
         }
         return config.targetSource || config.source;
     };
-    IoCContainer.injectProperty = function (target, key, propertyType) {
-        var propKey = "__" + key;
-        Object.defineProperty(target.prototype, key, {
-            enumerable: true,
-            get: function () {
-                return this[propKey] ? this[propKey] : this[propKey] = IoCContainer.get(propertyType);
-            },
-            set: function (newValue) {
-                this[propKey] = newValue;
-            }
-        });
-    };
     IoCContainer.bindings = new Map();
     return IoCContainer;
 }());

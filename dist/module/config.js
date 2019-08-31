@@ -1,4 +1,5 @@
 import { IoCContainer } from './ioc-container';
+import { METADATA_KEY } from './metadata-keys';
 import { Scope } from './scope';
 import { checkType } from './utils';
 var ConfigImpl = (function () {
@@ -13,12 +14,8 @@ var ConfigImpl = (function () {
             var configImpl_1 = this;
             this.iocprovider = {
                 get: function () {
-                    var _a;
                     var params = configImpl_1.getParameters();
-                    if (configImpl_1.decoratedConstructor) {
-                        return (params ? new ((_a = configImpl_1.decoratedConstructor).bind.apply(_a, [void 0].concat(params)))() : new configImpl_1.decoratedConstructor());
-                    }
-                    return (params ? new (target.bind.apply(target, [void 0].concat(params)))() : new target());
+                    return new (target.bind.apply(target, [void 0].concat(params)))();
                 }
             };
         }
@@ -60,10 +57,6 @@ var ConfigImpl = (function () {
         this.paramTypes = paramTypes;
         return this;
     };
-    ConfigImpl.prototype.toConstructor = function (newConstructor) {
-        this.decoratedConstructor = newConstructor;
-        return this;
-    };
     ConfigImpl.prototype.getInstance = function () {
         if (!this.iocscope) {
             this.scope(Scope.Singleton);
@@ -71,10 +64,8 @@ var ConfigImpl = (function () {
         return this.iocscope.resolve(this.iocprovider, this.source);
     };
     ConfigImpl.prototype.getParameters = function () {
-        if (this.paramTypes) {
-            return this.paramTypes.map(function (paramType) { return IoCContainer.get(paramType); });
-        }
-        return null;
+        var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
+        return paramTypes.map(function (paramType) { return IoCContainer.get(paramType); });
     };
     return ConfigImpl;
 }());

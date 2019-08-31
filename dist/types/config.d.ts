@@ -11,14 +11,12 @@ export declare class ConfigImpl implements Config {
     targetSource: Function;
     iocprovider: Provider;
     iocscope: Scope;
-    decoratedConstructor: FunctionConstructor;
-    paramTypes: Array<any>;
+    private paramTypes;
     constructor(source: Function);
     to(target: FunctionConstructor): this;
     provider(provider: Provider): this;
     scope(scope: Scope): this;
     withParams(...paramTypes: Array<any>): this;
-    toConstructor(newConstructor: FunctionConstructor): this;
     getInstance(): any;
     private getParameters;
 }
