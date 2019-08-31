@@ -1,5 +1,5 @@
 import { BindingImpl } from './binding';
-export declare class ContainerEngine {
+export declare class ContainerImpl {
     private bindings;
     isBound(source: Function): boolean;
     bind(source: Function): BindingImpl;

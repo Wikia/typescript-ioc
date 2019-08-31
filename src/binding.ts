@@ -1,4 +1,4 @@
-import { ContainerEngine } from './container-engine';
+import { ContainerImpl } from './container-impl';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { Scope } from './scope';
@@ -39,7 +39,7 @@ export class BindingImpl implements Binding {
   private iocscope: Scope;
   private paramTypes: any[];
 
-  constructor(private source: Function, private engine: ContainerEngine) {}
+  constructor(private source: Function, private container: ContainerImpl) {}
 
   to(target: FunctionConstructor): this {
     checkType(target);
@@ -55,7 +55,7 @@ export class BindingImpl implements Binding {
     } else {
       this.iocprovider = {
         get: () => {
-          return this.engine.getInstance(target);
+          return this.container.getInstance(target);
         }
       };
     }
@@ -68,7 +68,7 @@ export class BindingImpl implements Binding {
   private getParameters(): any[] {
     const paramTypes: any[] = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
 
-    return paramTypes.map(paramType => this.engine.getInstance(paramType));
+    return paramTypes.map(paramType => this.container.getInstance(paramType));
   }
 
   provider(provider: Provider): this {

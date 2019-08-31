@@ -1,20 +1,20 @@
 import 'reflect-metadata';
-import { ContainerEngine } from './container-engine';
+import { ContainerImpl } from './container-impl';
 var Container = (function () {
     function Container() {
-        this.engine = new ContainerEngine();
+        this.container = new ContainerImpl();
     }
     Container.prototype.bind = function (source) {
-        if (!this.engine.isBound(source)) {
-            return this.engine.bind(source).to(source);
+        if (!this.container.isBound(source)) {
+            return this.container.bind(source).to(source);
         }
-        return this.engine.bind(source);
+        return this.container.bind(source);
     };
     Container.prototype.get = function (source) {
-        return this.engine.getInstance(source);
+        return this.container.getInstance(source);
     };
     Container.prototype.getType = function (source) {
-        return this.engine.getType(source);
+        return this.container.getType(source);
     };
     return Container;
 }());

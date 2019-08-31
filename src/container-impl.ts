@@ -4,7 +4,7 @@ import { checkType } from './utils';
 /**
  * Internal implementation of IoC Container.
  */
-export class ContainerEngine {
+export class ContainerImpl {
   private bindings: Map<FunctionConstructor, BindingImpl> = new Map<FunctionConstructor, BindingImpl>();
 
   isBound(source: Function): boolean {

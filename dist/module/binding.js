@@ -2,9 +2,9 @@ import { METADATA_KEY } from './metadata-keys';
 import { Scope } from './scope';
 import { checkType } from './utils';
 var BindingImpl = (function () {
-    function BindingImpl(source, engine) {
+    function BindingImpl(source, container) {
         this.source = source;
-        this.engine = engine;
+        this.container = container;
     }
     BindingImpl.prototype.to = function (target) {
         var _this = this;
@@ -21,7 +21,7 @@ var BindingImpl = (function () {
         else {
             this.iocprovider = {
                 get: function () {
-                    return _this.engine.getInstance(target);
+                    return _this.container.getInstance(target);
                 }
             };
         }
@@ -33,7 +33,7 @@ var BindingImpl = (function () {
     BindingImpl.prototype.getParameters = function () {
         var _this = this;
         var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
-        return paramTypes.map(function (paramType) { return _this.engine.getInstance(paramType); });
+        return paramTypes.map(function (paramType) { return _this.container.getInstance(paramType); });
     };
     BindingImpl.prototype.provider = function (provider) {
         this.iocprovider = provider;

@@ -1,16 +1,16 @@
 import { BindingImpl } from './binding';
 import { checkType } from './utils';
-var ContainerEngine = (function () {
-    function ContainerEngine() {
+var ContainerImpl = (function () {
+    function ContainerImpl() {
         this.bindings = new Map();
     }
-    ContainerEngine.prototype.isBound = function (source) {
+    ContainerImpl.prototype.isBound = function (source) {
         checkType(source);
         var baseSource = source;
         var binding = this.bindings.get(baseSource);
         return (!!binding);
     };
-    ContainerEngine.prototype.bind = function (source) {
+    ContainerImpl.prototype.bind = function (source) {
         checkType(source);
         var baseSource = source;
         var binding = this.bindings.get(baseSource);
@@ -20,11 +20,11 @@ var ContainerEngine = (function () {
         }
         return binding;
     };
-    ContainerEngine.prototype.getInstance = function (source) {
+    ContainerImpl.prototype.getInstance = function (source) {
         var binding = this.bind(source);
         return binding.getInstance();
     };
-    ContainerEngine.prototype.getType = function (source) {
+    ContainerImpl.prototype.getType = function (source) {
         checkType(source);
         var baseSource = source;
         var binding = this.bindings.get(baseSource);
@@ -33,7 +33,7 @@ var ContainerEngine = (function () {
         }
         return binding.getType();
     };
-    return ContainerEngine;
+    return ContainerImpl;
 }());
-export { ContainerEngine };
-//# sourceMappingURL=container-engine.js.map
+export { ContainerImpl };
+//# sourceMappingURL=container-impl.js.map
