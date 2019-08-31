@@ -6,18 +6,14 @@ var BindingImpl = (function () {
         this.source = source;
         this.engine = engine;
     }
-    BindingImpl.prototype.toSelf = function () {
-        return this.to(this.source);
-    };
     BindingImpl.prototype.to = function (target) {
         var _this = this;
         checkType(target);
         this.targetSource = target;
         if (this.source === this.targetSource) {
-            var configImpl_1 = this;
             this.iocprovider = {
                 get: function () {
-                    var params = configImpl_1.getParameters();
+                    var params = _this.getParameters();
                     return new (target.bind.apply(target, [void 0].concat(params)))();
                 }
             };
@@ -25,7 +21,7 @@ var BindingImpl = (function () {
         else {
             this.iocprovider = {
                 get: function () {
-                    return _this.engine.get(target);
+                    return _this.engine.getInstance(target);
                 }
             };
         }
@@ -37,7 +33,7 @@ var BindingImpl = (function () {
     BindingImpl.prototype.getParameters = function () {
         var _this = this;
         var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
-        return paramTypes.map(function (paramType) { return _this.engine.get(paramType); });
+        return paramTypes.map(function (paramType) { return _this.engine.getInstance(paramType); });
     };
     BindingImpl.prototype.provider = function (provider) {
         this.iocprovider = provider;
@@ -68,6 +64,9 @@ var BindingImpl = (function () {
     BindingImpl.prototype.getInstance = function () {
         if (!this.iocscope) {
             this.scope(Scope.Singleton);
+        }
+        if (!this.iocprovider) {
+            this.to(this.source);
         }
         return this.iocscope.resolve(this.iocprovider, this.source);
     };

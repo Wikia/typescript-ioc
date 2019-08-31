@@ -7,34 +7,31 @@ var ContainerEngine = (function () {
     ContainerEngine.prototype.isBound = function (source) {
         checkType(source);
         var baseSource = source;
-        var config = this.bindings.get(baseSource);
-        return (!!config);
+        var binding = this.bindings.get(baseSource);
+        return (!!binding);
     };
     ContainerEngine.prototype.bind = function (source) {
         checkType(source);
         var baseSource = source;
-        var config = this.bindings.get(baseSource);
-        if (!config) {
-            config = new BindingImpl(baseSource, this);
-            this.bindings.set(baseSource, config);
+        var binding = this.bindings.get(baseSource);
+        if (!binding) {
+            binding = new BindingImpl(baseSource, this);
+            this.bindings.set(baseSource, binding);
         }
-        return config;
+        return binding;
     };
-    ContainerEngine.prototype.get = function (source) {
-        var config = this.bind(source);
-        if (!config.iocprovider) {
-            config.toSelf();
-        }
-        return config.getInstance();
+    ContainerEngine.prototype.getInstance = function (source) {
+        var binding = this.bind(source);
+        return binding.getInstance();
     };
     ContainerEngine.prototype.getType = function (source) {
         checkType(source);
         var baseSource = source;
-        var config = this.bindings.get(baseSource);
-        if (!config) {
+        var binding = this.bindings.get(baseSource);
+        if (!binding) {
             throw new TypeError("The type " + source.name + " hasn't been registered with the IOC Container");
         }
-        return config.getType();
+        return binding.getType();
     };
     return ContainerEngine;
 }());

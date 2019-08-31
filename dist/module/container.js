@@ -11,7 +11,7 @@ var Container = (function () {
         return this.engine.bind(source);
     };
     Container.prototype.get = function (source) {
-        return this.engine.get(source);
+        return this.engine.getInstance(source);
     };
     Container.prototype.getType = function (source) {
         return this.engine.getType(source);

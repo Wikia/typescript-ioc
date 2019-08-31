@@ -34,16 +34,12 @@ export interface Binding {
 }
 
 export class BindingImpl implements Binding {
-  iocprovider: Provider;
   private targetSource: Function;
+  private iocprovider: Provider;
   private iocscope: Scope;
   private paramTypes: any[];
 
   constructor(private source: Function, private engine: ContainerEngine) {}
-
-  toSelf(): this {
-    return this.to(this.source as FunctionConstructor);
-  }
 
   to(target: FunctionConstructor): this {
     checkType(target);
@@ -103,6 +99,10 @@ export class BindingImpl implements Binding {
     if (!this.iocscope) {
       this.scope(Scope.Singleton);
     }
+    if (!this.iocprovider) {
+      this.to(this.source as FunctionConstructor);
+    }
+
     return this.iocscope.resolve(this.iocprovider, this.source);
   }
 

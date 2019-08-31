@@ -27,9 +27,7 @@ export class ContainerEngine {
 
   getInstance<T extends Function>(source: T): T[keyof T] {
     const binding: BindingImpl = this.bind(source);
-    if (!binding.iocprovider) {
-      binding.toSelf();
-    }
+
     return binding.getInstance();
   }
 
