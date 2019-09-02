@@ -1,3 +1,4 @@
+// tslint:disable:max-classes-per-file
 import { Provider } from './provider';
 
 /**
@@ -30,7 +31,7 @@ export abstract class Scope {
    * Called by the IoC Container when some configuration is changed on the Container binding.
    * @param source The source type that has its configuration changed.
    */
-  reset(source: Function) {
+  reset(source: Function): void {
     // Do nothing
   }
 }
@@ -39,7 +40,7 @@ export abstract class Scope {
  * Default [[Scope]] that always create a new instace for any dependency resolution request
  */
 class TransientScope extends Scope {
-  resolve(provider: Provider, source: Function) {
+  resolve(provider: Provider, source: Function): any {
     return provider.get();
   }
 }
@@ -50,7 +51,7 @@ class TransientScope extends Scope {
 class SingletonScope extends Scope {
   private static instances: Map<Function, any> = new Map<Function, any>();
 
-  resolve(provider: Provider, source: any) {
+  resolve(provider: Provider, source: any): any {
     let instance: any = SingletonScope.instances.get(source);
     if (!instance) {
       source['__block_Instantiation'] = false;
@@ -61,7 +62,7 @@ class SingletonScope extends Scope {
     return instance;
   }
 
-  reset(source: Function) {
+  reset(source: Function): void {
     SingletonScope.instances.delete(source as FunctionConstructor);
   }
 }

@@ -95,7 +95,7 @@ export class BindingImpl implements Binding {
     return this;
   }
 
-  getInstance() {
+  getInstance(): any {
     if (!this.iocscope) {
       this.scope(Scope.Singleton);
     }

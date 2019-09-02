@@ -4,37 +4,36 @@
     "tslint-config-prettier"
   ],
   "rules": {
-    "array-type": [
-      true,
-      "array"
-    ],
     "no-string-literal": false,
-    "object-literal-shorthand": [
-      true,
-      "never"
-    ],
-    "only-arrow-functions": false,
-    "interface-name": false,
-    "max-classes-per-file": true,
-    "no-var-requires": false,
     "ban-types": false,
-    "no-unused-expression": true,
-    "semicolon": [
-      true,
-      "always"
-    ],
+    "typedef": [true, "call-signature"],
+    "no-parameter-reassignment": true,
+    "no-this-assignment": true,
+    "no-submodule-imports": true,
+    "no-default-export": true,
+    "interface-name": [true, "never-prefix"],
+    "no-inferrable-types": [true, "ignore-params"],
+    "callable-types": true,
+    "class-name": true,
     "member-access": [true, "no-public"],
     "member-ordering": [
       true,
       {
         "order": [
           "static-field",
-          "static-method",
           "instance-field",
           "constructor",
+          "static-method",
           "instance-method"
         ]
       }
+    ],
+    "array-type": [
+      true,
+      "array"
     ]
+  },
+  "linterOptions": {
+    "exclude": ["dist/", "node_modules/"]
   }
 }

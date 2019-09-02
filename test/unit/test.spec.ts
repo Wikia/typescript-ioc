@@ -135,17 +135,17 @@ describe('The IoC container.getType(source)', () => {
 
   @Injectable()
   class Test implements ITest {
-    testValue: string = 'success';
+    testValue = 'success';
   }
 
   @Injectable()
   class TestNoProvider {
-    testValue: string = 'success';
+    testValue = 'success';
   }
 
   @Injectable()
   class TypeNotRegistered {
-    testValue: string = 'success';
+    testValue = 'success';
   }
 
   container.bind(ITest).to(Test);
