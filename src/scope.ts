@@ -9,13 +9,13 @@ export abstract class Scope {
    * A reference to the TransientScope. Transient Scope return a new instance for each dependency resolution requested.
    * This is the default scope.
    */
-    // tslint:disable-next-line:variable-name
+  // tslint:disable-next-line:variable-name
   static Transient: Scope;
   /**
    * A reference to the SingletonScope. Singleton Scope return the same instance for any
    * dependency resolution requested.
    */
-    // tslint:disable-next-line:variable-name
+  // tslint:disable-next-line:variable-name
   static Singleton: Scope;
 
   /**

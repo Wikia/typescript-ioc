@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "tslint:recommended",
-    "tslint-config-prettier"
-  ],
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
   "rules": {
     "no-string-literal": false,
     "ban-types": false,
@@ -28,10 +25,7 @@
         ]
       }
     ],
-    "array-type": [
-      true,
-      "array"
-    ]
+    "array-type": [true, "array"]
   },
   "linterOptions": {
     "exclude": ["dist/", "node_modules/"]

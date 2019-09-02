@@ -50,13 +50,13 @@ export class BindingImpl implements Binding {
           const params = this.getParameters();
 
           return new target(...params);
-        }
+        },
       };
     } else {
       this.iocprovider = {
         get: () => {
           return this.container.getInstance(target);
-        }
+        },
       };
     }
     if (this.iocscope) {
@@ -66,7 +66,8 @@ export class BindingImpl implements Binding {
   }
 
   private getParameters(): any[] {
-    const paramTypes: any[] = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
+    const paramTypes: any[] =
+      this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
 
     return paramTypes.map(paramType => this.container.getInstance(paramType));
   }

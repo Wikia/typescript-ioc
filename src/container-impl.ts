@@ -5,13 +5,16 @@ import { checkType } from './utils';
  * Internal implementation of IoC Container.
  */
 export class ContainerImpl {
-  private bindings: Map<FunctionConstructor, BindingImpl> = new Map<FunctionConstructor, BindingImpl>();
+  private bindings: Map<FunctionConstructor, BindingImpl> = new Map<
+    FunctionConstructor,
+    BindingImpl
+  >();
 
   isBound(source: Function): boolean {
     checkType(source);
     const baseSource = source as FunctionConstructor;
     const binding: BindingImpl = this.bindings.get(baseSource);
-    return (!!binding);
+    return !!binding;
   }
 
   bind(source: Function): BindingImpl {

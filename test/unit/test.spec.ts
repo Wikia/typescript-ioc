@@ -9,7 +9,6 @@ import { Scope } from '../../src/scope';
 const container = new Container();
 const expect = chai.expect;
 
-
 describe('@Inject annotation on Constructor parameter', () => {
   const constructorsArgs: any[] = new Array<any>();
   const constructorsMultipleArgs: any[] = new Array<any>();
@@ -71,8 +70,7 @@ describe('@Inject annotation on Constructor parameter', () => {
 });
 
 describe('Default Implementation class', () => {
-  class BaseClass {
-  }
+  class BaseClass {}
 
   @Injectable()
   class ImplementationClass implements BaseClass {
@@ -88,7 +86,6 @@ describe('Default Implementation class', () => {
 });
 
 describe('The IoC container.bind(source)', () => {
-
   @Injectable()
   class ContainerInjectTest {
     constructor(public dateProperty?: Date) {}
@@ -108,7 +105,6 @@ describe('The IoC container.bind(source)', () => {
 });
 
 describe('The IoC container.get(source)', () => {
-
   @Injectable()
   class ContainerInjectConstructorTest {
     injectedDate: Date;
@@ -127,7 +123,6 @@ describe('The IoC container.get(source)', () => {
 });
 
 describe('The IoC container.getType(source)', () => {
-
   @Injectable()
   abstract class ITest {
     abstract testValue: string;
@@ -167,18 +162,15 @@ describe('The IoC container.getType(source)', () => {
       expect(e).instanceOf(TypeError);
     }
   });
-
 });
 
 describe('The IoC Container', () => {
+  class SingletonInstantiation {}
 
-  class SingletonInstantiation {
-  }
+  class ContainerSingletonInstantiation {}
 
-  class ContainerSingletonInstantiation {
-  }
-
-  container.bind(ContainerSingletonInstantiation)
+  container
+    .bind(ContainerSingletonInstantiation)
     .to(ContainerSingletonInstantiation)
     .scope(Scope.Singleton);
 
@@ -197,7 +189,6 @@ describe('The IoC Container', () => {
 });
 
 describe('The IoC Container Binding.to()', () => {
-
   abstract class FirstClass {
     abstract getValue(): string;
   }

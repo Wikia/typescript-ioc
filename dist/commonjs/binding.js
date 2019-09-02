@@ -17,14 +17,14 @@ var BindingImpl = (function () {
                 get: function () {
                     var params = _this.getParameters();
                     return new (target.bind.apply(target, [void 0].concat(params)))();
-                }
+                },
             };
         }
         else {
             this.iocprovider = {
                 get: function () {
                     return _this.container.getInstance(target);
-                }
+                },
             };
         }
         if (this.iocscope) {

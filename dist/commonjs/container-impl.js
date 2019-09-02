@@ -10,7 +10,7 @@ var ContainerImpl = (function () {
         utils_1.checkType(source);
         var baseSource = source;
         var binding = this.bindings.get(baseSource);
-        return (!!binding);
+        return !!binding;
     };
     ContainerImpl.prototype.bind = function (source) {
         utils_1.checkType(source);

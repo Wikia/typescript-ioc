@@ -1,1 +1,1 @@
-export declare function Injectable(): (target: any) => any;
+export declare function Injectable(): Function;
