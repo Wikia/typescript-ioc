@@ -39,7 +39,7 @@ export class ContainerImpl {
     const baseSource = source as FunctionConstructor;
     const binding: BindingImpl = this.bindings.get(baseSource);
     if (!binding) {
-      throw new TypeError(`The type ${source.name} hasn't been registered with the IOC Container`);
+      return source;
     }
     return binding.getType();
   }

@@ -35,6 +35,13 @@ var BindingImpl = (function () {
         var paramTypes = this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
         return paramTypes.map(function (paramType) { return _this.container.getInstance(paramType); });
     };
+    BindingImpl.prototype.value = function (value) {
+        return this.provider({
+            get: function () {
+                return value;
+            },
+        });
+    };
     BindingImpl.prototype.provider = function (provider) {
         this.iocprovider = provider;
         if (this.iocscope) {

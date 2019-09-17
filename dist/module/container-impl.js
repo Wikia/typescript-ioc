@@ -29,7 +29,7 @@ var ContainerImpl = (function () {
         var baseSource = source;
         var binding = this.bindings.get(baseSource);
         if (!binding) {
-            throw new TypeError("The type " + source.name + " hasn't been registered with the IOC Container");
+            return source;
         }
         return binding.getType();
     };

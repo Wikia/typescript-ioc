@@ -15,10 +15,10 @@ export interface Binding {
   to(target: Object): this;
 
   /**
-   * Inform a provider to be used to create instances when a dependency for the source type is requested.
-   * @param provider The provider to create instances
+   * Inform a value to be used when a dependency for the source type is requested.
+   * @param value The instance that should be returned.
    */
-  provider(provider: Provider): this;
+  value(value: any): this;
 
   /**
    * Inform a scope to handle the instances for objects created by the Container for this binding.
@@ -72,7 +72,19 @@ export class BindingImpl implements Binding {
     return paramTypes.map(paramType => this.container.getInstance(paramType));
   }
 
-  provider(provider: Provider): this {
+  value(value: any): this {
+    return this.provider({
+      get(): Object {
+        return value;
+      },
+    });
+  }
+
+  /**
+   * Inform a provider to be used to create instances when a dependency for the source type is requested.
+   * @param provider The provider to create instances
+   */
+  private provider(provider: Provider): this {
     this.iocprovider = provider;
     if (this.iocscope) {
       this.iocscope.reset(this.source);
