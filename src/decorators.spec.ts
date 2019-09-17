@@ -1,9 +1,6 @@
-import * as chai from 'chai';
-import 'mocha';
-import { Container } from '../../src/container';
-import { Injectable } from '../../src/decorators';
-
-const expect = chai.expect;
+/* tslint:disable:max-classes-per-file */
+import { Container } from './container';
+import { Injectable } from './decorators';
 
 @Injectable()
 class ClassWithDecorator {
@@ -32,13 +29,13 @@ describe('@Injectable decorator', () => {
 
   it('should pass for ConstructorClassWithDecorator', () => {
     const instance = container.get(ConstructorClassWithDecorator);
-    expect(instance.dep1 instanceof ClassWithDecorator).to.be.true;
-    expect(instance.dep2 instanceof ClassWithoutDecorator).to.be.true;
+    expect(instance.dep1 instanceof ClassWithDecorator).toBe(true);
+    expect(instance.dep2 instanceof ClassWithoutDecorator).toBe(true);
   });
 
   it('should fail for ConstructorClassWithoutDecorator', () => {
     const instance = container.get(ConstructorClassWithoutDecorator);
-    expect(instance.dep1 instanceof ClassWithDecorator).to.be.false;
-    expect(instance.dep2 instanceof ClassWithoutDecorator).to.be.false;
+    expect(instance.dep1 instanceof ClassWithDecorator).toBe(false);
+    expect(instance.dep2 instanceof ClassWithoutDecorator).toBe(false);
   });
 });
