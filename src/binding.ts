@@ -1,4 +1,4 @@
-import { ContainerImpl } from './container-impl';
+import { Container } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { Scope } from './scope';
@@ -21,6 +21,12 @@ export interface Binding {
   value(value: any): this;
 
   /**
+   * Inform a provider to be used to create instances when a dependency for the source type is requested.
+   * @param provider The provider to create instances
+   */
+  provider(provider: Provider): this;
+
+  /**
    * Inform a scope to handle the instances for objects created by the Container for this binding.
    * @param scope Scope to handle instances
    */
@@ -39,25 +45,15 @@ export class BindingImpl implements Binding {
   private iocscope: Scope;
   private paramTypes: any[];
 
-  constructor(private source: Function, private container: ContainerImpl) {}
+  constructor(private source: Function, private container: Container) {}
 
   to(target: FunctionConstructor): this {
     checkType(target);
     this.targetSource = target;
     if (this.source === this.targetSource) {
-      this.iocprovider = {
-        get: () => {
-          const params = this.getParameters();
-
-          return new target(...params);
-        },
-      };
+      this.setSelfProvider(target);
     } else {
-      this.iocprovider = {
-        get: () => {
-          return this.container.getInstance(target);
-        },
-      };
+      this.setTargetProvider(target);
     }
     if (this.iocscope) {
       this.iocscope.reset(this.source);
@@ -65,26 +61,32 @@ export class BindingImpl implements Binding {
     return this;
   }
 
+  private setSelfProvider(target: FunctionConstructor): void {
+    this.iocprovider = () => {
+      const params = this.getParameters();
+
+      return new target(...params);
+    };
+  }
+
   private getParameters(): any[] {
     const paramTypes: any[] =
       this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
 
-    return paramTypes.map(paramType => this.container.getInstance(paramType));
+    return paramTypes.map(paramType => this.container.get(paramType));
+  }
+
+  private setTargetProvider(target: FunctionConstructor): void {
+    this.iocprovider = () => {
+      return this.container.get(target);
+    };
   }
 
   value(value: any): this {
-    return this.provider({
-      get(): Object {
-        return value;
-      },
-    });
+    return this.provider(() => value);
   }
 
-  /**
-   * Inform a provider to be used to create instances when a dependency for the source type is requested.
-   * @param provider The provider to create instances
-   */
-  private provider(provider: Provider): this {
+  provider(provider: Provider): this {
     this.iocprovider = provider;
     if (this.iocscope) {
       this.iocscope.reset(this.source);
@@ -116,7 +118,7 @@ export class BindingImpl implements Binding {
       this.to(this.source as FunctionConstructor);
     }
 
-    return this.iocscope.resolve(this.iocprovider, this.source);
+    return this.iocscope.resolve(() => this.iocprovider(this.container), this.source);
   }
 
   getType(): Function {

@@ -1,5 +1,6 @@
 // tslint:disable:max-classes-per-file
-import { Provider } from './provider';
+
+type Creator<T = any> = () => T;
 
 /**
  * Class responsible to handle the scope of the instances created by the Container
@@ -21,11 +22,11 @@ export abstract class Scope {
   /**
    * Method called when the Container needs to resolve a dependency. It should return the instance that will
    * be returned by the Container.
-   * @param provider The provider associated with the current bind. Used to create new instances when necessary.
+   * @param creator The creator associated with the current bind. Used to create new instances when necessary.
    * @param source The source type of this bind.
    * @return the resolved instance.
    */
-  abstract resolve(provider: Provider, source: Function): any;
+  abstract resolve(creator: Creator, source: Function): any;
 
   /**
    * Called by the IoC Container when some configuration is changed on the Container binding.
@@ -40,8 +41,8 @@ export abstract class Scope {
  * Default [[Scope]] that always create a new instace for any dependency resolution request
  */
 class TransientScope extends Scope {
-  resolve(provider: Provider, source: Function): any {
-    return provider.get();
+  resolve(creator: Creator, source: Function): any {
+    return creator();
   }
 }
 
@@ -51,11 +52,11 @@ class TransientScope extends Scope {
 class SingletonScope extends Scope {
   private static instances: Map<Function, any> = new Map<Function, any>();
 
-  resolve(provider: Provider, source: any): any {
+  resolve(creator: Creator, source: any): any {
     let instance: any = SingletonScope.instances.get(source);
     if (!instance) {
       source['__block_Instantiation'] = false;
-      instance = provider.get();
+      instance = creator();
       source['__block_Instantiation'] = true;
       SingletonScope.instances.set(source, instance);
     }
