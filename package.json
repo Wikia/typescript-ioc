@@ -1,8 +1,8 @@
 {
   "name": "typescript-ioc",
-  "version": "1.2.5",
-  "description": "A Lightweight annotation-based dependency injection container for typescript.",
-  "author": "Thiago da Rosa de Bustamante <trbustamante@gmail.com>",
+  "version": "1.0.0",
+  "description": "A Lightweight dependency injection container for typescript and javascript.",
+  "author": "Damian Bielecki <bielik20@gmail.com>",
   "keywords": [
     "ioc",
     "di",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/thiagobustamante/typescript-ioc.git"
+    "url": "https://github.com/Bielik20/typescript-ioc.git"
   },
   "license": "MIT",
   "files": [
