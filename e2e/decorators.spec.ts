@@ -1,24 +1,24 @@
 import { Container, Injectable } from '../src';
 
+@Injectable()
+class ClassWithDecorator {
+  id = 'class with decorator';
+}
+
+class ClassWithoutDecorator {
+  id = 'class without decorator';
+}
+
+@Injectable()
+class ConstructorClassWithDecorator {
+  constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
+}
+
+class ConstructorClassWithoutDecorator {
+  constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
+}
+
 describe('@Injectable decorator', () => {
-  @Injectable()
-  class ClassWithDecorator {
-    id = 'class with decorator';
-  }
-
-  class ClassWithoutDecorator {
-    id = 'class without decorator';
-  }
-
-  @Injectable()
-  class ConstructorClassWithDecorator {
-    constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
-  }
-
-  class ConstructorClassWithoutDecorator {
-    constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
-  }
-
   let container: Container;
 
   beforeEach(() => {
@@ -27,12 +27,14 @@ describe('@Injectable decorator', () => {
 
   it('should pass for ConstructorClassWithDecorator', () => {
     const instance = container.get(ConstructorClassWithDecorator);
+
     expect(instance.dep1 instanceof ClassWithDecorator).toBe(true);
     expect(instance.dep2 instanceof ClassWithoutDecorator).toBe(true);
   });
 
   it('should fail for ConstructorClassWithoutDecorator', () => {
     const instance = container.get(ConstructorClassWithoutDecorator);
+
     expect(instance.dep1).toBe(undefined);
     expect(instance.dep2).toBe(undefined);
   });
