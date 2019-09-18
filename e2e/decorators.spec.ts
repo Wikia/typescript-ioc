@@ -1,24 +1,24 @@
 import { Container, Injectable } from '../src';
 
-@Injectable()
-class ClassWithDecorator {
-  id = 'class with decorator';
-}
-
-class ClassWithoutDecorator {
-  id = 'class without decorator';
-}
-
-@Injectable()
-class ConstructorClassWithDecorator {
-  constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
-}
-
-class ConstructorClassWithoutDecorator {
-  constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
-}
-
 describe('@Injectable decorator', () => {
+  @Injectable()
+  class ClassWithDecorator {
+    id = 'class with decorator';
+  }
+
+  class ClassWithoutDecorator {
+    id = 'class without decorator';
+  }
+
+  @Injectable()
+  class ConstructorClassWithDecorator {
+    constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
+  }
+
+  class ConstructorClassWithoutDecorator {
+    constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
+  }
+
   let container: Container;
 
   beforeEach(() => {
