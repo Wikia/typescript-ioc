@@ -24,7 +24,7 @@ class MasterClassImpl implements MasterClass {
   constructor(public dep: DependencyClass) {}
 }
 
-describe('bind to class', () => {
+describe('bind to', () => {
   let container: Container;
 
   beforeEach(() => {

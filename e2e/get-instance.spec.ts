@@ -18,7 +18,7 @@ class ConstructorClassWithoutDecorator {
   constructor(public dep1: ClassWithDecorator, public dep2: ClassWithoutDecorator) {}
 }
 
-describe('@Injectable decorator', () => {
+describe('get instance', () => {
   let container: Container;
 
   beforeEach(() => {

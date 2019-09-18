@@ -11,7 +11,7 @@ class MasterClass {
   constructor(public dependency: TestClass) {}
 }
 
-describe('scope', () => {
+describe('bind scope', () => {
   let container: Container;
 
   beforeEach(() => {
