@@ -34,15 +34,9 @@
     "lint:fix": "tslint --fix ./src/**/*.ts ./test/**/*.ts -t verbose",
     "prettier": "prettier --write '**/*.{ts,js,json,css,scss,html}'",
     "format": "npm run prettier && npm run lint:fix",
-    "test:new": "jest --coverage",
+    "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
-    "report-coverage": "cat ./coverage/lcov.info | coveralls",
-    "pretest": "cross-env NODE_ENV=test npm build && npm run lint",
-    "test": "npm run test:es5 && npm run test:es6",
-    "test:es5": "cross-env NODE_ENV=test mocha",
-    "test:es6": "cross-env NODE_ENV=test mocha --opts ./test/mocha-es6.opts",
-    "test:coverage": "nyc npm run test:es6",
     "tsc": "npm run tsc:module && npm run tsc:commonjs",
     "tsc:module": "tsc --project tsconfig.module.json",
     "tsc:commonjs": "tsc"
@@ -52,18 +46,13 @@
     "require-glob": "^3.2.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.4",
     "@types/jest": "^24.0.18",
-    "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.19",
-    "chai": "^4.1.2",
     "cross-env": "^5.2.0",
     "husky": "^3.0.5",
     "istanbul": "^0.4.5",
     "jest": "^24.9.0",
     "lint-staged": "^9.2.5",
-    "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
     "prettier": "^1.18.2",
     "rimraf": "^2.6.2",
     "source-map-support": "^0.5.9",
@@ -72,24 +61,6 @@
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "typescript": "^3.0.1"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "report-dir": "./reports/coverage",
-    "sourceMap": true,
-    "instrument": true
   },
   "husky": {
     "hooks": {
