@@ -1,5 +1,9 @@
 import { Container, Injectable, Scope } from '../src';
 
+class Base {}
+
+class BaseImp implements Base {}
+
 class TestClass {}
 
 @Injectable()
@@ -47,5 +51,25 @@ describe('scope', () => {
 
     expect(instance1).not.toBe(instance2);
     expect(instance1.dependency).toBe(instance2.dependency);
+  });
+
+  it('should assign scope to father/base class', () => {
+    container
+      .bind(Base)
+      .to(BaseImp)
+      .scope(Scope.Transient);
+
+    let instance1 = container.get(Base);
+    let instance2 = container.get(Base);
+
+    // is not transient because BaseImpl is not set to transient
+    expect(instance1).toBe(instance2);
+
+    container.bind(BaseImp).scope(Scope.Transient);
+    instance1 = container.get(Base);
+    instance2 = container.get(Base);
+
+    // is transient because now BaseImpl is set to transient
+    expect(instance1).not.toBe(instance2);
   });
 });
