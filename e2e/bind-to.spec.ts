@@ -65,4 +65,10 @@ describe('bind to', () => {
     expect(instance.name).toBe('implementation master');
     expect(instance.dep.name).toBe('original dependency');
   });
+
+  it('should throw for undefined', () => {
+    expect(() => container.bind(undefined)).toThrow(
+      TypeError('Invalid type requested to IoC container. Type is not defined.'),
+    );
+  });
 });
