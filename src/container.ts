@@ -75,12 +75,8 @@ export class Container implements ContainerDocumentation {
   }
 
   getType(source: Function): Function {
-    checkType(source);
-    const baseSource = source as FunctionConstructor;
-    const binding: BindingImpl = this.bindings.get(baseSource);
-    if (!binding) {
-      return source;
-    }
+    const binding: BindingImpl = this.getBinding(source);
+
     return binding.getType();
   }
 }

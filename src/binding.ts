@@ -41,8 +41,8 @@ export interface Binding {
 
 export class BindingImpl implements Binding {
   private targetSource: Function;
-  private iocprovider: Provider;
-  private iocscope: Scope;
+  private _provider: Provider;
+  private _scope: Scope;
   private paramTypes: any[];
 
   constructor(private source: Function, private container: Container) {}
@@ -55,18 +55,15 @@ export class BindingImpl implements Binding {
     } else {
       this.setTargetProvider(target);
     }
-    if (this.iocscope) {
-      this.iocscope.reset(this.source);
-    }
     return this;
   }
 
   private setSelfProvider(target: FunctionConstructor): void {
-    this.iocprovider = () => {
+    this.provider(() => {
       const params = this.getParameters();
 
       return new target(...params);
-    };
+    });
   }
 
   private getParameters(): any[] {
@@ -77,9 +74,7 @@ export class BindingImpl implements Binding {
   }
 
   private setTargetProvider(target: FunctionConstructor): void {
-    this.iocprovider = () => {
-      return this.container.get(target);
-    };
+    this.provider(() => this.container.get(target));
   }
 
   value(value: any): this {
@@ -87,15 +82,15 @@ export class BindingImpl implements Binding {
   }
 
   provider(provider: Provider): this {
-    this.iocprovider = provider;
-    if (this.iocscope) {
-      this.iocscope.reset(this.source);
+    this._provider = provider;
+    if (this._scope) {
+      this._scope.reset(this.source);
     }
     return this;
   }
 
   scope(scope: Scope): this {
-    this.iocscope = scope;
+    this._scope = scope;
     if (scope === Scope.Singleton) {
       (this as any).source['__block_Instantiation'] = true;
       scope.reset(this.source);
@@ -111,14 +106,14 @@ export class BindingImpl implements Binding {
   }
 
   getInstance(): any {
-    if (!this.iocscope) {
+    if (!this._scope) {
       this.scope(Scope.Singleton);
     }
-    if (!this.iocprovider) {
+    if (!this._provider) {
       this.to(this.source as FunctionConstructor);
     }
 
-    return this.iocscope.resolve(() => this.iocprovider(this.container), this.source);
+    return this._scope.resolve(() => this._provider(this.container), this.source);
   }
 
   getType(): Function {

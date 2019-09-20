@@ -9,6 +9,7 @@
     "no-submodule-imports": true,
     "no-default-export": true,
     "interface-name": [true, "never-prefix"],
+    "variable-name": [true, "allow-leading-underscore"],
     "no-inferrable-types": [true, "ignore-params"],
     "callable-types": true,
     "class-name": true,

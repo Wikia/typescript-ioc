@@ -64,7 +64,7 @@ class SingletonScope extends Scope {
   }
 
   reset(source: Function): void {
-    SingletonScope.instances.delete(source as FunctionConstructor);
+    SingletonScope.instances.delete(source);
   }
 }
 
