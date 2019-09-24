@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/Bielik20/jenkins-rxjs.svg?branch=master)](https://travis-ci.org/Bielik20/jenkins-rxjs)
-[![Known Vulnerabilities](https://snyk.io/test/github/Bielik20/typescript-ioc/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Bielik20/typescript-ioc?targetFile=package.json)
+[![Known Vulnerabilities](https://snyk.io/test/github/Wikia/dependency-injection-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Bielik20/typescript-ioc?targetFile=package.json)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Coverage Status](https://coveralls.io/repos/github/Bielik20/typescript-ioc/badge.svg?branch=master)](https://coveralls.io/github/Bielik20/typescript-ioc?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Wikia/dependency-injection-js/badge.svg?branch=master)](https://coveralls.io/github/Bielik20/typescript-ioc?branch=master)
 
 # IoC Container for Typescript and Javascript
 
@@ -29,10 +29,10 @@ This library only works with typescript. Ensure it is installed:
 npm install typescript -g
 ```
 
-To install typescript-ioc:
+To install dependency-injection-js:
 
 ```bash
-npm install git+https://github.com/Bielik20/typescript-ioc.git
+npm install git+https://github.com/Wikia/dependency-injection-js.git
 ```
 
 ## Configuration
