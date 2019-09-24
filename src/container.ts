@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Binding, BindingImpl } from './binding';
+import { Scope } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -41,6 +42,12 @@ export class Container implements ContainerDocumentation {
     FunctionConstructor,
     BindingImpl
   >();
+
+  constructor() {
+    this.bind(Container)
+      .scope(Scope.Singleton)
+      .value(this);
+  }
 
   bind(source: Function): Binding {
     if (!this.isBound(source)) {

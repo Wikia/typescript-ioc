@@ -12,7 +12,7 @@
     "node",
     "dependency injection",
     "dependency inversion",
-    "inversion of control container"
+    "inversion of control"
   ],
   "repository": {
     "type": "git",

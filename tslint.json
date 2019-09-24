@@ -29,6 +29,6 @@
     "array-type": [true, "array"]
   },
   "linterOptions": {
-    "exclude": ["dist/", "node_modules/"]
+    "exclude": ["dist/**/*"]
   }
 }

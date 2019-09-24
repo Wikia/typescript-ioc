@@ -1,3 +1,2 @@
-export interface Provider {
-    get(): Object;
-}
+import { Container } from './container';
+export declare type Provider<T = any> = (container: Container) => T;

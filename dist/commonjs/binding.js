@@ -9,50 +9,44 @@ var BindingImpl = (function () {
         this.container = container;
     }
     BindingImpl.prototype.to = function (target) {
-        var _this = this;
         utils_1.checkType(target);
         this.targetSource = target;
         if (this.source === this.targetSource) {
-            this.iocprovider = {
-                get: function () {
-                    var params = _this.getParameters();
-                    return new (target.bind.apply(target, [void 0].concat(params)))();
-                },
-            };
+            this.setSelfProvider(target);
         }
         else {
-            this.iocprovider = {
-                get: function () {
-                    return _this.container.getInstance(target);
-                },
-            };
-        }
-        if (this.iocscope) {
-            this.iocscope.reset(this.source);
+            this.setTargetProvider(target);
         }
         return this;
+    };
+    BindingImpl.prototype.setSelfProvider = function (target) {
+        var _this = this;
+        this.provider(function () {
+            var params = _this.getParameters();
+            return new (target.bind.apply(target, [void 0].concat(params)))();
+        });
     };
     BindingImpl.prototype.getParameters = function () {
         var _this = this;
         var paramTypes = this.paramTypes || Reflect.getMetadata(metadata_keys_1.METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
-        return paramTypes.map(function (paramType) { return _this.container.getInstance(paramType); });
+        return paramTypes.map(function (paramType) { return _this.container.get(paramType); });
+    };
+    BindingImpl.prototype.setTargetProvider = function (target) {
+        var _this = this;
+        this.provider(function () { return _this.container.get(target); });
     };
     BindingImpl.prototype.value = function (value) {
-        return this.provider({
-            get: function () {
-                return value;
-            },
-        });
+        return this.provider(function () { return value; });
     };
     BindingImpl.prototype.provider = function (provider) {
-        this.iocprovider = provider;
-        if (this.iocscope) {
-            this.iocscope.reset(this.source);
+        this._provider = provider;
+        if (this._scope) {
+            this._scope.reset(this.source);
         }
         return this;
     };
     BindingImpl.prototype.scope = function (scope) {
-        this.iocscope = scope;
+        this._scope = scope;
         if (scope === scope_1.Scope.Singleton) {
             this.source['__block_Instantiation'] = true;
             scope.reset(this.source);
@@ -71,13 +65,14 @@ var BindingImpl = (function () {
         return this;
     };
     BindingImpl.prototype.getInstance = function () {
-        if (!this.iocscope) {
+        var _this = this;
+        if (!this._scope) {
             this.scope(scope_1.Scope.Singleton);
         }
-        if (!this.iocprovider) {
+        if (!this._provider) {
             this.to(this.source);
         }
-        return this.iocscope.resolve(this.iocprovider, this.source);
+        return this._scope.resolve(function () { return _this._provider(_this.container); }, this.source);
     };
     BindingImpl.prototype.getType = function () {
         return this.targetSource || this.source;

@@ -26,8 +26,8 @@ var TransientScope = (function (_super) {
     function TransientScope() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    TransientScope.prototype.resolve = function (provider, source) {
-        return provider.get();
+    TransientScope.prototype.resolve = function (creator, source) {
+        return creator();
     };
     return TransientScope;
 }(Scope));
@@ -36,11 +36,11 @@ var SingletonScope = (function (_super) {
     function SingletonScope() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    SingletonScope.prototype.resolve = function (provider, source) {
+    SingletonScope.prototype.resolve = function (creator, source) {
         var instance = SingletonScope.instances.get(source);
         if (!instance) {
             source['__block_Instantiation'] = false;
-            instance = provider.get();
+            instance = creator();
             source['__block_Instantiation'] = true;
             SingletonScope.instances.set(source, instance);
         }

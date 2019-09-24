@@ -1,7 +1,8 @@
-import { Provider } from './provider';
+declare type Creator<T = any> = () => T;
 export declare abstract class Scope {
     static Transient: Scope;
     static Singleton: Scope;
-    abstract resolve(provider: Provider, source: Function): any;
+    abstract resolve(creator: Creator, source: Function): any;
     reset(source: Function): void;
 }
+export {};
