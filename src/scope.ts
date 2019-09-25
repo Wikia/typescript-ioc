@@ -3,22 +3,19 @@
 type Creator<T = any> = () => T;
 
 /**
+ * @param Singleton - Singleton Scope return the same instance for any dependency resolution requested.
+ * @param Transient - Transient Scope return a new instance for each dependency resolution requested.
+ */
+export type BindingScope = 'Singleton' | 'Transient';
+
+export interface Scopes {
+  Singleton: SingletonScope;
+  Transient: TransientScope;
+}
+/**
  * Class responsible to handle the scope of the instances created by the Container
  */
 export abstract class Scope {
-  /**
-   * A reference to the TransientScope. Transient Scope return a new instance for each dependency resolution requested.
-   * This is the default scope.
-   */
-  // tslint:disable-next-line:variable-name
-  static Transient: Scope;
-  /**
-   * A reference to the SingletonScope. Singleton Scope return the same instance for any
-   * dependency resolution requested.
-   */
-  // tslint:disable-next-line:variable-name
-  static Singleton: Scope;
-
   /**
    * Method called when the Container needs to resolve a dependency. It should return the instance that will
    * be returned by the Container.
@@ -40,7 +37,7 @@ export abstract class Scope {
 /**
  * Default [[Scope]] that always create a new instace for any dependency resolution request
  */
-class TransientScope extends Scope {
+export class TransientScope extends Scope {
   resolve(creator: Creator, source: Function): any {
     return creator();
   }
@@ -49,15 +46,15 @@ class TransientScope extends Scope {
 /**
  * Scope that create only a single instace to handle all dependency resolution requests.
  */
-class SingletonScope extends Scope {
+export class SingletonScope extends Scope {
   private static instances: Map<Function, any> = new Map<Function, any>();
 
-  resolve(creator: Creator, source: any): any {
+  resolve(creator: Creator, source: Function): any {
     let instance: any = SingletonScope.instances.get(source);
     if (!instance) {
-      source['__block_Instantiation'] = false;
+      (source as any)['__block_Instantiation'] = false;
       instance = creator();
-      source['__block_Instantiation'] = true;
+      (source as any)['__block_Instantiation'] = true;
       SingletonScope.instances.set(source, instance);
     }
     return instance;
@@ -67,7 +64,3 @@ class SingletonScope extends Scope {
     SingletonScope.instances.delete(source);
   }
 }
-
-Scope.Transient = new TransientScope();
-
-Scope.Singleton = new SingletonScope();

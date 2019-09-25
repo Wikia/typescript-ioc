@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Binding, BindingImpl } from './binding';
-import { Scope } from './scope';
+import { Scopes, SingletonScope, TransientScope } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -43,9 +43,15 @@ export class Container implements ContainerDocumentation {
     BindingImpl
   >();
 
+  // @ts-ignore
+  private scopes: Scopes = {
+    Singleton: new SingletonScope(),
+    Transient: new TransientScope(),
+  };
+
   constructor() {
     this.bind(Container)
-      .scope(Scope.Singleton)
+      .scope('Singleton')
       .value(this);
   }
 
@@ -69,7 +75,7 @@ export class Container implements ContainerDocumentation {
     const baseSource = source as FunctionConstructor;
     let binding: BindingImpl = this.bindings.get(baseSource);
     if (!binding) {
-      binding = new BindingImpl(baseSource, this);
+      binding = new BindingImpl(baseSource, this, this.scopes);
       this.bindings.set(baseSource, binding);
     }
     return binding;

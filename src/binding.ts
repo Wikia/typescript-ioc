@@ -1,7 +1,7 @@
 import { Container } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
-import { Scope } from './scope';
+import { BindingScope, Scopes } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -30,7 +30,7 @@ export interface Binding {
    * Inform a scope to handle the instances for objects created by the Container for this binding.
    * @param scope Scope to handle instances
    */
-  scope(scope: Scope): this;
+  scope(scope: BindingScope): this;
 
   /**
    * Inform the types to be retrieved from IoC Container and passed to the type constructor.
@@ -42,10 +42,10 @@ export interface Binding {
 export class BindingImpl implements Binding {
   private targetSource: Function;
   private _provider: Provider;
-  private _scope: Scope;
+  private _scope: BindingScope;
   private paramTypes: any[];
 
-  constructor(private source: Function, private container: Container) {}
+  constructor(private source: Function, private container: Container, private scopes: Scopes) {}
 
   to(target: FunctionConstructor): this {
     checkType(target);
@@ -84,16 +84,16 @@ export class BindingImpl implements Binding {
   provider(provider: Provider): this {
     this._provider = provider;
     if (this._scope) {
-      this._scope.reset(this.source);
+      this.scopes[this._scope].reset(this.source);
     }
     return this;
   }
 
-  scope(scope: Scope): this {
+  scope(scope: BindingScope): this {
     this._scope = scope;
-    if (scope === Scope.Singleton) {
+    if (this._scope === 'Singleton') {
       (this as any).source['__block_Instantiation'] = true;
-      scope.reset(this.source);
+      this.scopes[this._scope].reset(this.source);
     } else if ((this as any).source['__block_Instantiation']) {
       delete (this as any).source['__block_Instantiation'];
     }
@@ -107,13 +107,13 @@ export class BindingImpl implements Binding {
 
   getInstance(): any {
     if (!this._scope) {
-      this.scope(Scope.Singleton);
+      this.scope('Singleton');
     }
     if (!this._provider) {
       this.to(this.source as FunctionConstructor);
     }
 
-    return this._scope.resolve(() => this._provider(this.container), this.source);
+    return this.scopes[this._scope].resolve(() => this._provider(this.container), this.source);
   }
 
   getType(): Function {
