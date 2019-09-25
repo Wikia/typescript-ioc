@@ -1,0 +1,27 @@
+language: node_js
+
+cache:
+  directories:
+    - '$HOME/.npm'
+
+notifications:
+  email: false
+
+node_js:
+  - '10'
+  - '8'
+
+jobs:
+  include:
+    - stage: 'Produce Coverage'
+      node_js: node
+      script: npm run test:prod && npm run report-coverage
+
+    - stage: 'Release'
+      node_js: lts/*
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: npx semantic-release
+        on:
+          branch: master

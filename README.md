@@ -1,17 +1,40 @@
-[![Build Status](https://travis-ci.org/Bielik20/jenkins-rxjs.svg?branch=master)](https://travis-ci.org/Bielik20/jenkins-rxjs)
-[![Known Vulnerabilities](https://snyk.io/test/github/Bielik20/typescript-ioc/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Bielik20/typescript-ioc?targetFile=package.json)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Coverage Status](https://coveralls.io/repos/github/Bielik20/typescript-ioc/badge.svg?branch=master)](https://coveralls.io/github/Bielik20/typescript-ioc?branch=master)
-
 # IoC Container for Typescript and Javascript
 
-This is a lightweight (weights around 14 KB, where `reflect-metadata` takes almost 10 KB) dependency injection container for typescript and javascript. 
-It was created so that it can be used in mixed projects (lib in ts and app in js). 
+<p align="center">
+    <a href="https://www.npmjs.com/package/@wikia/dependency-injection">
+        <img src="https://img.shields.io/npm/v/@wikia/dependency-injection.svg" alt="npm version">
+    </a>
+    <a href="https://www.npmjs.com/package/@wikia/dependency-injection">
+        <img src="https://img.shields.io/npm/dm/@wikia/dependency-injection.svg" alt="npm downloads">
+    </a>
+    <a href="https://github.com/prettier/prettier">
+        <img alt="Travis" src="https://img.shields.io/badge/styled_with-prettier-ff69b4.svg">
+    </a>
+    <a href="https://github.com/semantic-release/semantic-release">
+        <img alt="Travis" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+    </a>
+</p>
+
+<p align="center">
+    <a href="https://travis-ci.org/Wikia/dependency-injection-js">
+        <img alt="Travis" src="https://travis-ci.org/Wikia/dependency-injection-js.svg?branch=master">
+    </a>
+    <a href="https://coveralls.io/github/Wikia/dependency-injection-js?branch=master">
+        <img alt="Travis" src="https://coveralls.io/repos/github/Wikia/dependency-injection-js/badge.svg?branch=master">
+    </a>
+    <a href="https://snyk.io/test/github/Wikia/dependency-injection-js?targetFile=package.json">
+        <img alt="Travis" src="https://snyk.io/test/github/Wikia/dependency-injection-js/badge.svg?targetFile=package.json">
+    </a>
+</p>
+
+This is a lightweight (weights around 14 KB, where `reflect-metadata` takes almost 10 KB) dependency injection container for typescript and javascript.
+It was created so that it can be used in mixed projects (lib in ts and app in js).
 It is designed to be used on browser but can be used on node.js server as well.
 
 It was inspired by:
+
 - [InversifyJS](https://github.com/inversify/InversifyJS) - it was too big, weighting over 50 KB.
-- [typescript-ioc](https://github.com/thiagobustamante/typescript-ioc) - it didn't work well on browser and we didn't agree with the best practices proposed by it. 
+- [typescript-ioc](https://github.com/thiagobustamante/typescript-ioc) - it didn't work well on browser and we didn't agree with the best practices proposed by it.
 
 ## Table of Contents
 
@@ -29,10 +52,10 @@ This library only works with typescript. Ensure it is installed:
 npm install typescript -g
 ```
 
-To install typescript-ioc:
+To install dependency-injection-js:
 
 ```bash
-npm install git+https://github.com/Bielik20/typescript-ioc.git
+npm install git+https://github.com/Wikia/dependency-injection-js.git
 ```
 
 ## Configuration
@@ -93,9 +116,8 @@ abstract class PersonDAO implements IPersonDAO {
 }
 
 class PersonDAOImpl implements IPersonDAO {
-  get(id: string): Person
-  {
-      // get the person and return it...
+  get(id: string): Person {
+    // get the person and return it...
   }
 }
 
@@ -104,9 +126,9 @@ container.bind(IPersonDAO).to(PersonDAOImpl);
 
 // SUPPORTED
 container.bind(PersonDAO).to(PersonDAOImpl);
-
 ```
 
 ## Restrictions
+
 - Circular injections are not supported.
 - You can only inject types that are already defined into your file.

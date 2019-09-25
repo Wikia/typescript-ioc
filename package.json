@@ -1,12 +1,13 @@
 {
-  "name": "typescript-ioc",
-  "version": "1.0.0",
+  "name": "@wikia/dependency-injection",
+  "version": "0.0.0-development",
   "description": "A Lightweight dependency injection container for typescript and javascript.",
-  "author": "Damian Bielecki <bielik20@gmail.com>",
+  "contributors": [
+    "Damian Bielecki <dbielecki@fandom.com>"
+  ],
   "keywords": [
     "ioc",
     "di",
-    "cdi",
     "javascript",
     "typescript",
     "node",
@@ -16,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bielik20/typescript-ioc.git"
+    "url": "https://github.com/Wikia/dependency-injection-js.git"
   },
   "license": "MIT",
   "files": [
@@ -27,9 +28,10 @@
   "typings": "./dist/types/index.d.ts",
   "scripts": {
     "start": "tsc -w",
+    "prepublishOnly": "npm run build",
+    "prebuild": "rimraf dist",
     "build": "npm run clean && npm run tsc",
     "watch": "npm run tsc:module -- -w",
-    "clean": "rimraf dist",
     "lint": "tslint ./src/**/*.ts ./e2e/**/*.ts",
     "lint:fix": "tslint --fix ./src/**/*.ts ./e2e/**/*.ts -t verbose",
     "prettier": "prettier --write '**/*.{ts,js,json,css,scss,html}'",
@@ -37,17 +39,24 @@
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "tsc": "npm run tsc:module && npm run tsc:commonjs",
     "tsc:module": "tsc --project tsconfig.module.json",
-    "tsc:commonjs": "tsc"
+    "tsc:commonjs": "tsc",
+    "commit": "git-cz",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "reflect-metadata": "^0.1.10",
+    "reflect-metadata": "^0.1.13",
     "require-glob": "^3.2.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^7.1.2",
+    "@commitlint/config-conventional": "^7.1.2",
     "@types/jest": "^24.0.18",
     "@types/node": "^8.10.19",
+    "commitizen": "^3.0.0",
+    "coveralls": "^3.0.6",
     "cross-env": "^5.2.0",
     "husky": "^3.0.5",
     "istanbul": "^0.4.5",
@@ -60,10 +69,23 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.0.1"
+    "cz-conventional-changelog": "^2.1.0",
+    "typescript": "^3.0.1",
+    "semantic-release": "^15.13.24"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "husky": {
     "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
     }
   }

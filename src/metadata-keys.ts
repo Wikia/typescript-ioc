@@ -7,5 +7,5 @@ export const METADATA_KEY = {
   /**
    * used to store types to be injected
    */
-  PARAM_TYPES: 'typescript-ioc:paramtypes',
+  PARAM_TYPES: 'wikia-ioc:paramtypes',
 };
