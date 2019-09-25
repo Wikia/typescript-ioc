@@ -1,6 +1,6 @@
 {
   "name": "@wikia/dependency-injection",
-  "version": "0.0.0",
+  "version": "0.0.0-development",
   "description": "A Lightweight dependency injection container for typescript and javascript.",
   "contributors": [
     "Damian Bielecki <dbielecki@fandom.com>"
@@ -32,7 +32,6 @@
     "prebuild": "rimraf dist",
     "build": "npm run clean && npm run tsc",
     "watch": "npm run tsc:module -- -w",
-    "clean": "rimraf dist",
     "lint": "tslint ./src/**/*.ts ./e2e/**/*.ts",
     "lint:fix": "tslint --fix ./src/**/*.ts ./e2e/**/*.ts -t verbose",
     "prettier": "prettier --write '**/*.{ts,js,json,css,scss,html}'",
@@ -44,7 +43,8 @@
     "tsc": "npm run tsc:module && npm run tsc:commonjs",
     "tsc:module": "tsc --project tsconfig.module.json",
     "tsc:commonjs": "tsc",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13",
@@ -70,7 +70,8 @@
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.15.0",
     "cz-conventional-changelog": "^2.1.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.1",
+    "semantic-release": "^15.13.24"
   },
   "config": {
     "commitizen": {

@@ -22,6 +22,6 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        script: echo "should deploy"
+        script: npx semantic-release
         on:
           branch: master
