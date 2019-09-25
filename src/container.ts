@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Binding, BindingImpl } from './binding';
-import { ScopesDictionary, ScopesEnum, SingletonScope, TransientScope } from './scope';
+import { SCOPES, ScopesDictionary, SingletonScope, TransientScope } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -43,7 +43,6 @@ export class Container implements ContainerDocumentation {
     BindingImpl
   >();
 
-  // @ts-ignore
   private scopes: ScopesDictionary = {
     Singleton: new SingletonScope(),
     Transient: new TransientScope(),
@@ -51,7 +50,7 @@ export class Container implements ContainerDocumentation {
 
   constructor() {
     this.bind(Container)
-      .scope(ScopesEnum.Singleton)
+      .scope(SCOPES.Singleton)
       .value(this);
   }
 

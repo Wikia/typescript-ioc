@@ -9,8 +9,7 @@ export interface BindingScopeEnum {
   Transient: BindingScope;
 }
 
-// tslint:disable-next-line:variable-name
-export const ScopesEnum: BindingScopeEnum = {
+export const SCOPES: BindingScopeEnum = {
   /**
    * Singleton Scope return the same instance for any dependency resolution requested.
    */
@@ -48,33 +47,26 @@ export abstract class Scope {
   }
 }
 
-/**
- * Default [[Scope]] that always create a new instance for any dependency resolution request
- */
 export class TransientScope extends Scope {
   resolve(creator: Creator, source: Function): any {
     return creator();
   }
 }
 
-/**
- * Scope that create only a single instance to handle all dependency resolution requests.
- */
 export class SingletonScope extends Scope {
-  private static instances: Map<Function, any> = new Map<Function, any>();
+  private instances: Map<Function, any> = new Map<Function, any>();
 
   resolve(creator: Creator, source: Function): any {
-    let instance: any = SingletonScope.instances.get(source);
+    let instance: any = this.instances.get(source);
     if (!instance) {
-      (source as any)['__block_Instantiation'] = false;
       instance = creator();
-      (source as any)['__block_Instantiation'] = true;
-      SingletonScope.instances.set(source, instance);
+      this.instances.set(source, instance);
     }
+
     return instance;
   }
 
   reset(source: Function): void {
-    SingletonScope.instances.delete(source);
+    this.instances.delete(source);
   }
 }

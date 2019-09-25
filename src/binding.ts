@@ -1,7 +1,7 @@
 import { Container } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
-import { BindingScope, ScopesDictionary, ScopesEnum } from './scope';
+import { BindingScope, SCOPES, ScopesDictionary } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -40,39 +40,41 @@ export interface Binding {
 }
 
 export class BindingImpl implements Binding {
-  private targetSource: Function;
+  private targetType: FunctionConstructor;
   private _provider: Provider;
-  private _scope: BindingScope;
+  private _scope: BindingScope = SCOPES.Singleton;
   private paramTypes: any[];
 
   constructor(
-    private source: Function,
+    private sourceType: FunctionConstructor,
     private container: Container,
     private scopes: ScopesDictionary,
-  ) {}
+  ) {
+    this.to(this.sourceType);
+  }
 
-  to(target: FunctionConstructor): this {
-    checkType(target);
-    this.targetSource = target;
-    if (this.source === this.targetSource) {
-      this.setSelfProvider(target);
+  to(targetType: FunctionConstructor): this {
+    checkType(targetType);
+    this.targetType = targetType;
+    if (this.sourceType === this.targetType) {
+      this.setSelfProvider();
     } else {
-      this.setTargetProvider(target);
+      this.setTargetProvider(targetType);
     }
     return this;
   }
 
-  private setSelfProvider(target: FunctionConstructor): void {
+  private setSelfProvider(): void {
     this.provider(() => {
       const params = this.getParameters();
 
-      return new target(...params);
+      return new this.sourceType(...params);
     });
   }
 
   private getParameters(): any[] {
     const paramTypes: any[] =
-      this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
+      this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
 
     return paramTypes.map(paramType => this.container.get(paramType));
   }
@@ -87,40 +89,29 @@ export class BindingImpl implements Binding {
 
   provider(provider: Provider): this {
     this._provider = provider;
-    if (this._scope) {
-      this.scopes[this._scope].reset(this.source);
-    }
+    this.scopes[this._scope].reset(this.sourceType);
+
     return this;
   }
 
   scope(scope: BindingScope): this {
     this._scope = scope;
-    if (this._scope === ScopesEnum.Singleton) {
-      (this as any).source['__block_Instantiation'] = true;
-      this.scopes[this._scope].reset(this.source);
-    } else if ((this as any).source['__block_Instantiation']) {
-      delete (this as any).source['__block_Instantiation'];
-    }
+    this.scopes[this._scope].reset(this.sourceType);
+
     return this;
   }
 
   withParams(...paramTypes: any[]): this {
     this.paramTypes = paramTypes;
+
     return this;
   }
 
   getInstance(): any {
-    if (!this._scope) {
-      this.scope(ScopesEnum.Singleton);
-    }
-    if (!this._provider) {
-      this.to(this.source as FunctionConstructor);
-    }
-
-    return this.scopes[this._scope].resolve(() => this._provider(this.container), this.source);
+    return this.scopes[this._scope].resolve(() => this._provider(this.container), this.sourceType);
   }
 
   getType(): Function {
-    return this.targetSource || this.source;
+    return this.targetType;
   }
 }
