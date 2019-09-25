@@ -1,7 +1,11 @@
-[![Build Status](https://travis-ci.org/Bielik20/jenkins-rxjs.svg?branch=master)](https://travis-ci.org/Bielik20/jenkins-rxjs)
-[![Known Vulnerabilities](https://snyk.io/test/github/Wikia/dependency-injection-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Bielik20/typescript-ioc?targetFile=package.json)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![NPM version](https://img.shields.io/npm/v/@wikia/dependency-injection.svg)](https://www.npmjs.com/package/@wikia/dependency-injection.svg)
+![Downloads](https://img.shields.io/npm/dm/@wikia/dependency-injection.svg)
+[![Build Status](https://travis-ci.org/Wikia/dependency-injection-js.svg?branch=master)](https://travis-ci.org/Wikia/dependency-injection-js)
 [![Coverage Status](https://coveralls.io/repos/github/Wikia/dependency-injection-js/badge.svg?branch=master)](https://coveralls.io/github/Bielik20/typescript-ioc?branch=master)
+[![Known Vulnerabilities](https://snyk.io/test/github/Wikia/dependency-injection-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Wikia/dependency-injection-js?targetFile=package.json)
+
+[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 # IoC Container for Typescript and Javascript
 
