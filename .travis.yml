@@ -11,14 +11,21 @@ node_js:
   - '10'
   - '8'
 
+install: npm ci
+script:
+  - npm run test
+  - npm run build
+
 jobs:
   include:
-    - stage: 'Produce Coverage'
-      node_js: node
+    - stage: 'Coverage'
+      node_js: lts/*
       script: npm run test:prod && npm run report-coverage
 
     - stage: 'Release'
+      if: branch = master AND type = push
       node_js: lts/*
+      script: skip
       deploy:
         provider: script
         skip_cleanup: true

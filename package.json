@@ -30,7 +30,7 @@
     "start": "tsc -w",
     "prepublishOnly": "npm run build",
     "prebuild": "rimraf dist",
-    "build": "npm run clean && npm run tsc",
+    "build": "npm run tsc",
     "watch": "npm run tsc:module -- -w",
     "lint": "tslint ./src/**/*.ts ./e2e/**/*.ts",
     "lint:fix": "tslint --fix ./src/**/*.ts ./e2e/**/*.ts -t verbose",
@@ -47,8 +47,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "reflect-metadata": "^0.1.13",
-    "require-glob": "^3.2.0"
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
