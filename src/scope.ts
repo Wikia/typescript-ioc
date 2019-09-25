@@ -2,13 +2,27 @@
 
 type Creator<T = any> = () => T;
 
-/**
- * @param Singleton - Singleton Scope return the same instance for any dependency resolution requested.
- * @param Transient - Transient Scope return a new instance for each dependency resolution requested.
- */
-export type BindingScope = 'Singleton' | 'Transient';
+export type BindingScope = keyof ScopesDictionary;
 
-export interface Scopes {
+export interface BindingScopeEnum {
+  Singleton: BindingScope;
+  Transient: BindingScope;
+}
+
+// tslint:disable-next-line:variable-name
+export const ScopesEnum: BindingScopeEnum = {
+  /**
+   * Singleton Scope return the same instance for any dependency resolution requested.
+   */
+  Singleton: 'Singleton',
+
+  /**
+   * Transient Scope return a new instance for each dependency resolution requested.
+   */
+  Transient: 'Transient',
+};
+
+export interface ScopesDictionary {
   Singleton: SingletonScope;
   Transient: TransientScope;
 }
@@ -35,7 +49,7 @@ export abstract class Scope {
 }
 
 /**
- * Default [[Scope]] that always create a new instace for any dependency resolution request
+ * Default [[Scope]] that always create a new instance for any dependency resolution request
  */
 export class TransientScope extends Scope {
   resolve(creator: Creator, source: Function): any {
@@ -44,7 +58,7 @@ export class TransientScope extends Scope {
 }
 
 /**
- * Scope that create only a single instace to handle all dependency resolution requests.
+ * Scope that create only a single instance to handle all dependency resolution requests.
  */
 export class SingletonScope extends Scope {
   private static instances: Map<Function, any> = new Map<Function, any>();

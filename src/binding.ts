@@ -1,7 +1,7 @@
 import { Container } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
-import { BindingScope, Scopes } from './scope';
+import { BindingScope, ScopesDictionary, ScopesEnum } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -45,7 +45,11 @@ export class BindingImpl implements Binding {
   private _scope: BindingScope;
   private paramTypes: any[];
 
-  constructor(private source: Function, private container: Container, private scopes: Scopes) {}
+  constructor(
+    private source: Function,
+    private container: Container,
+    private scopes: ScopesDictionary,
+  ) {}
 
   to(target: FunctionConstructor): this {
     checkType(target);
@@ -91,7 +95,7 @@ export class BindingImpl implements Binding {
 
   scope(scope: BindingScope): this {
     this._scope = scope;
-    if (this._scope === 'Singleton') {
+    if (this._scope === ScopesEnum.Singleton) {
       (this as any).source['__block_Instantiation'] = true;
       this.scopes[this._scope].reset(this.source);
     } else if ((this as any).source['__block_Instantiation']) {
@@ -107,7 +111,7 @@ export class BindingImpl implements Binding {
 
   getInstance(): any {
     if (!this._scope) {
-      this.scope('Singleton');
+      this.scope(ScopesEnum.Singleton);
     }
     if (!this._provider) {
       this.to(this.source as FunctionConstructor);

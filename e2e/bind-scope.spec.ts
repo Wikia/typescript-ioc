@@ -1,4 +1,4 @@
-import { Container, Injectable } from '../src';
+import { Container, Injectable, ScopesEnum } from '../src';
 
 class Base {}
 
@@ -26,7 +26,7 @@ describe('bind scope', () => {
   });
 
   it('should create singleton when setting scope to singleton', () => {
-    container.bind(TestClass).scope('Singleton');
+    container.bind(TestClass).scope(ScopesEnum.Singleton);
 
     const instance1 = container.get(TestClass);
     const instance2 = container.get(TestClass);
@@ -35,7 +35,7 @@ describe('bind scope', () => {
   });
 
   it('should create transient when setting scope to transient', () => {
-    container.bind(TestClass).scope('Transient');
+    container.bind(TestClass).scope(ScopesEnum.Transient);
 
     const instance1 = container.get(TestClass);
     const instance2 = container.get(TestClass);
@@ -44,7 +44,7 @@ describe('bind scope', () => {
   });
 
   it('should work for mixed', () => {
-    container.bind(MasterClass).scope('Transient');
+    container.bind(MasterClass).scope(ScopesEnum.Transient);
 
     const instance1 = container.get(MasterClass);
     const instance2 = container.get(MasterClass);
@@ -57,7 +57,7 @@ describe('bind scope', () => {
     container
       .bind(Base)
       .to(BaseImp)
-      .scope('Transient');
+      .scope(ScopesEnum.Transient);
 
     let instance1 = container.get(Base);
     let instance2 = container.get(Base);
@@ -65,7 +65,7 @@ describe('bind scope', () => {
     // is not transient because BaseImpl is not set to transient
     expect(instance1).toBe(instance2);
 
-    container.bind(BaseImp).scope('Transient');
+    container.bind(BaseImp).scope(ScopesEnum.Transient);
     instance1 = container.get(Base);
     instance2 = container.get(Base);
 
