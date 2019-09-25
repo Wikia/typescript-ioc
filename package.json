@@ -30,7 +30,7 @@
     "start": "tsc -w",
     "prepublishOnly": "npm run build",
     "prebuild": "rimraf dist",
-    "build": "npm run clean && npm run tsc",
+    "build": "npm run tsc",
     "watch": "npm run tsc:module -- -w",
     "lint": "tslint ./src/**/*.ts ./e2e/**/*.ts",
     "lint:fix": "tslint --fix ./src/**/*.ts ./e2e/**/*.ts -t verbose",
