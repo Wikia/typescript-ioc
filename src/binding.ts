@@ -1,7 +1,7 @@
 import { Container } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
-import { BindingScope, SCOPES, ScopesDictionary } from './scope';
+import { BindingScope, Scope, SCOPES, ScopesDictionary } from './scope';
 import { checkType } from './utils';
 
 /**
@@ -42,7 +42,7 @@ export interface Binding {
 export class BindingImpl implements Binding {
   private targetType: FunctionConstructor;
   private _provider: Provider;
-  private _scope: BindingScope = SCOPES.Singleton;
+  private _scope: Scope;
   private paramTypes: any[];
 
   constructor(
@@ -50,6 +50,7 @@ export class BindingImpl implements Binding {
     private container: Container,
     private scopes: ScopesDictionary,
   ) {
+    this.scope(SCOPES.Singleton);
     this.to(this.sourceType);
   }
 
@@ -57,14 +58,15 @@ export class BindingImpl implements Binding {
     checkType(targetType);
     this.targetType = targetType;
     if (this.sourceType === this.targetType) {
-      this.setSelfProvider();
+      this.provideSourceType();
     } else {
-      this.setTargetProvider(targetType);
+      this.provideTargetType();
     }
+
     return this;
   }
 
-  private setSelfProvider(): void {
+  private provideSourceType(): void {
     this.provider(() => {
       const params = this.getParameters();
 
@@ -79,8 +81,8 @@ export class BindingImpl implements Binding {
     return paramTypes.map(paramType => this.container.get(paramType));
   }
 
-  private setTargetProvider(target: FunctionConstructor): void {
-    this.provider(() => this.container.get(target));
+  private provideTargetType(): void {
+    this.provider(() => this.container.get(this.targetType));
   }
 
   value(value: any): this {
@@ -89,14 +91,14 @@ export class BindingImpl implements Binding {
 
   provider(provider: Provider): this {
     this._provider = provider;
-    this.scopes[this._scope].reset(this.sourceType);
+    this._scope.reset(this.sourceType);
 
     return this;
   }
 
   scope(scope: BindingScope): this {
-    this._scope = scope;
-    this.scopes[this._scope].reset(this.sourceType);
+    this._scope = this.scopes[scope];
+    this._scope.reset(this.sourceType);
 
     return this;
   }
@@ -108,7 +110,7 @@ export class BindingImpl implements Binding {
   }
 
   getInstance(): any {
-    return this.scopes[this._scope].resolve(() => this._provider(this.container), this.sourceType);
+    return this._scope.resolve(() => this._provider(this.container), this.sourceType);
   }
 
   getType(): Function {
