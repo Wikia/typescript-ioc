@@ -1,24 +1,36 @@
 // tslint:disable:max-classes-per-file
 
-type Creator<T = any> = () => T;
+import { Type } from './utils';
 
+type Creator<T> = () => T;
+
+export type BindingScope = keyof ScopesDictionary;
+
+export interface BindingScopeEnum {
+  Singleton: BindingScope;
+  Transient: BindingScope;
+}
+
+export const SCOPES: BindingScopeEnum = {
+  /**
+   * Singleton Scope return the same instance for any dependency resolution requested.
+   */
+  Singleton: 'Singleton',
+
+  /**
+   * Transient Scope return a new instance for each dependency resolution requested.
+   */
+  Transient: 'Transient',
+};
+
+export interface ScopesDictionary {
+  Singleton: SingletonScope;
+  Transient: TransientScope;
+}
 /**
  * Class responsible to handle the scope of the instances created by the Container
  */
-export abstract class Scope {
-  /**
-   * A reference to the TransientScope. Transient Scope return a new instance for each dependency resolution requested.
-   * This is the default scope.
-   */
-  // tslint:disable-next-line:variable-name
-  static Transient: Scope;
-  /**
-   * A reference to the SingletonScope. Singleton Scope return the same instance for any
-   * dependency resolution requested.
-   */
-  // tslint:disable-next-line:variable-name
-  static Singleton: Scope;
-
+export abstract class Scope<T> {
   /**
    * Method called when the Container needs to resolve a dependency. It should return the instance that will
    * be returned by the Container.
@@ -26,48 +38,37 @@ export abstract class Scope {
    * @param source The source type of this bind.
    * @return the resolved instance.
    */
-  abstract resolve(creator: Creator, source: Function): any;
+  abstract resolve(creator: Creator<T>, source: Type<T>): T;
 
   /**
    * Called by the IoC Container when some configuration is changed on the Container binding.
    * @param source The source type that has its configuration changed.
    */
-  reset(source: Function): void {
+  reset(source: Type<T>): void {
     // Do nothing
   }
 }
 
-/**
- * Default [[Scope]] that always create a new instace for any dependency resolution request
- */
-class TransientScope extends Scope {
-  resolve(creator: Creator, source: Function): any {
+export class TransientScope<T = any> extends Scope<T> {
+  resolve(creator: Creator<T>, source: Type<T>): T {
     return creator();
   }
 }
 
-/**
- * Scope that create only a single instace to handle all dependency resolution requests.
- */
-class SingletonScope extends Scope {
-  private static instances: Map<Function, any> = new Map<Function, any>();
+export class SingletonScope<T = any> extends Scope<T> {
+  private instances = new Map<Type<T>, T>();
 
-  resolve(creator: Creator, source: any): any {
-    let instance: any = SingletonScope.instances.get(source);
+  resolve(creator: Creator<T>, source: Type<T>): T {
+    let instance = this.instances.get(source);
     if (!instance) {
-      source['__block_Instantiation'] = false;
       instance = creator();
-      source['__block_Instantiation'] = true;
-      SingletonScope.instances.set(source, instance);
+      this.instances.set(source, instance);
     }
+
     return instance;
   }
 
-  reset(source: Function): void {
-    SingletonScope.instances.delete(source);
+  reset(source: Type<T>): void {
+    this.instances.delete(source);
   }
 }
-
-Scope.Transient = new TransientScope();
-
-Scope.Singleton = new SingletonScope();

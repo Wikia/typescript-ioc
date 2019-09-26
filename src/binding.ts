@@ -1,122 +1,120 @@
-import { Container } from './container';
+import { Container, ContainerOptions } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
-import { Scope } from './scope';
-import { checkType } from './utils';
+import { BindingScope, Scope, ScopesDictionary } from './scope';
+import { checkType, Type } from './utils';
 
 /**
  * A bind configuration for a given type in the IoC Container.
  */
-export interface Binding {
+export interface Binding<T> {
   /**
    * Inform a given implementation type to be used when a dependency for the source type is requested.
    * @param target The implementation type
    */
-  to(target: Object): this;
+  to(target: Type<T>): this;
 
   /**
    * Inform a value to be used when a dependency for the source type is requested.
    * @param value The instance that should be returned.
    */
-  value(value: any): this;
+  value(value: T): this;
 
   /**
    * Inform a provider to be used to create instances when a dependency for the source type is requested.
    * @param provider The provider to create instances
    */
-  provider(provider: Provider): this;
+  provider(provider: Provider<T>): this;
 
   /**
    * Inform a scope to handle the instances for objects created by the Container for this binding.
    * @param scope Scope to handle instances
    */
-  scope(scope: Scope): this;
+  scope(scope: BindingScope): this;
 
   /**
    * Inform the types to be retrieved from IoC Container and passed to the type constructor.
    * @param paramTypes A list with parameter types.
    */
-  withParams(...paramTypes: any[]): this;
+  withParams(...paramTypes: Type<any>[]): this;
 }
 
-export class BindingImpl implements Binding {
-  private targetSource: Function;
-  private _provider: Provider;
-  private _scope: Scope;
-  private paramTypes: any[];
+export class BindingImpl<T> implements Binding<T> {
+  private targetType: Type<T>;
+  private _provider: Provider<T>;
+  private _scope: Scope<T>;
+  private paramTypes: Type<any>[];
 
-  constructor(private source: Function, private container: Container) {}
+  constructor(
+    private readonly sourceType: Type<T>,
+    private readonly container: Container,
+    private readonly scopes: ScopesDictionary,
+    private readonly containerOptions: ContainerOptions,
+  ) {
+    this.scope(this.containerOptions.defaultScope);
+    this.to(this.sourceType);
+  }
 
-  to(target: FunctionConstructor): this {
-    checkType(target);
-    this.targetSource = target;
-    if (this.source === this.targetSource) {
-      this.setSelfProvider(target);
+  to(targetType: Type<T>): this {
+    checkType(targetType);
+    this.targetType = targetType;
+    if (this.sourceType === this.targetType) {
+      this.provideSourceType();
     } else {
-      this.setTargetProvider(target);
+      this.provideTargetType();
     }
+
     return this;
   }
 
-  private setSelfProvider(target: FunctionConstructor): void {
+  private provideSourceType(): void {
     this.provider(() => {
       const params = this.getParameters();
 
-      return new target(...params);
+      return new this.sourceType(...params);
     });
   }
 
-  private getParameters(): any[] {
-    const paramTypes: any[] =
-      this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetSource) || [];
+  private getParameters(): Type<any>[] {
+    const paramTypes: Type<any>[] =
+      this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
 
     return paramTypes.map(paramType => this.container.get(paramType));
   }
 
-  private setTargetProvider(target: FunctionConstructor): void {
-    this.provider(() => this.container.get(target));
+  private provideTargetType(): void {
+    this.provider(() => this.container.get(this.targetType));
   }
 
-  value(value: any): this {
+  value(value: T): this {
     return this.provider(() => value);
   }
 
-  provider(provider: Provider): this {
+  provider(provider: Provider<T>): this {
     this._provider = provider;
-    if (this._scope) {
-      this._scope.reset(this.source);
-    }
+    this._scope.reset(this.sourceType);
+
     return this;
   }
 
-  scope(scope: Scope): this {
-    this._scope = scope;
-    if (scope === Scope.Singleton) {
-      (this as any).source['__block_Instantiation'] = true;
-      scope.reset(this.source);
-    } else if ((this as any).source['__block_Instantiation']) {
-      delete (this as any).source['__block_Instantiation'];
-    }
+  scope(scope: BindingScope): this {
+    this._scope = this.scopes[scope];
+    this._scope.reset(this.sourceType);
+
     return this;
   }
 
-  withParams(...paramTypes: any[]): this {
+  withParams(...paramTypes: Type<any>[]): this {
     this.paramTypes = paramTypes;
+
     return this;
   }
 
-  getInstance(): any {
-    if (!this._scope) {
-      this.scope(Scope.Singleton);
-    }
-    if (!this._provider) {
-      this.to(this.source as FunctionConstructor);
-    }
-
-    return this._scope.resolve(() => this._provider(this.container), this.source);
+  getInstance(): T {
+    return this._scope.resolve(() => this._provider(this.container), this.sourceType);
   }
 
-  getType(): Function {
-    return this.targetSource || this.source;
+  getType(): Type<T> {
+    return this.targetType;
   }
 }

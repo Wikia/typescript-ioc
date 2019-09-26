@@ -1,88 +1,93 @@
 import 'reflect-metadata';
 import { Binding, BindingImpl } from './binding';
-import { Scope } from './scope';
-import { checkType } from './utils';
+import { BindingScope, SCOPES, ScopesDictionary, SingletonScope, TransientScope } from './scope';
+import { checkType, Type } from './utils';
+
+export interface ContainerOptions {
+  /**
+   * @default Singleton
+   */
+  defaultScope?: BindingScope;
+}
+
+interface ContainerDocumentation {
+  /**
+   * Add a dependency to the Container. If this type is already present, just return its associated configuration object.
+   * @example
+   * Container.bind(PersonDAO).to(ProgrammerDAO).scope(SCOPES.Singleton);
+   */
+  bind<T>(source: Type<T>): Binding<T>;
+
+  /**
+   * Retrieve an object from the container. It will resolve all dependencies and apply any type replacement before return the object.
+   * If there is no declared dependency to the given source type, an implicit bind is performed to this type.
+   */
+  get<T>(source: Type<T>): T;
+
+  /**
+   * Retrieve a type associated with the type provided from the container.
+   */
+  getType<T>(source: Type<T>): Type<T>;
+}
 
 /**
  * The IoC Container class. Can be used to register and to retrieve your dependencies.
  */
-export interface ContainerDocumentation {
-  /**
-   * Add a dependency to the Container. If this type is already present, just return its associated
-   * configuration object.
-   * Example of usage:
-   *
-   * ```
-   * Container.bind(PersonDAO).to(ProgrammerDAO).scope(Scope.Singleton);
-   * ```
-   * @param source The type that will be bound to the Container
-   * @return a container configuration
-   */
-  bind(source: Function): Binding;
-
-  /**
-   * Retrieve an object from the container. It will resolve all dependencies and apply any type replacement
-   * before return the object.
-   * If there is no declared dependency to the given source type, an implicit bind is performed to this type.
-   * @param source The dependency type to resolve
-   * @return an object resolved for the given source type;
-   */
-  get<T extends Function>(source: T): T[keyof T];
-
-  /**
-   * Retrieve a type associated with the type provided from the container
-   * @param source The dependency type to resolve
-   * @return an object resolved for the given source type;
-   */
-  getType(source: Function): Function;
-}
-
 export class Container implements ContainerDocumentation {
-  private bindings: Map<FunctionConstructor, BindingImpl> = new Map<
-    FunctionConstructor,
-    BindingImpl
-  >();
+  private readonly containerOptions: ContainerOptions;
 
-  constructor() {
+  private readonly bindings = new Map<Type<any>, BindingImpl<any>>();
+
+  private readonly scopes: ScopesDictionary = {
+    Singleton: new SingletonScope(),
+    Transient: new TransientScope(),
+  };
+
+  constructor(containerOptions: ContainerOptions = {}) {
+    this.containerOptions = {
+      defaultScope: SCOPES.Singleton,
+      ...containerOptions,
+    };
+
     this.bind(Container)
-      .scope(Scope.Singleton)
+      .scope(SCOPES.Singleton)
       .value(this);
   }
 
-  bind(source: Function): Binding {
+  bind<T>(source: Type<T>): Binding<T> {
     if (!this.isBound(source)) {
-      return this.getBinding(source).to(source as FunctionConstructor);
+      return this.getBinding(source).to(source);
     }
 
     return this.getBinding(source);
   }
 
-  private isBound(source: Function): boolean {
-    checkType(source);
-    const baseSource = source as FunctionConstructor;
-    const binding: BindingImpl = this.bindings.get(baseSource);
+  private isBound<T>(sourceType: Type<T>): boolean {
+    checkType(sourceType);
+    const binding: BindingImpl<T> = this.bindings.get(sourceType);
+
     return !!binding;
   }
 
-  private getBinding(source: Function): BindingImpl {
-    checkType(source);
-    const baseSource = source as FunctionConstructor;
-    let binding: BindingImpl = this.bindings.get(baseSource);
+  private getBinding<T>(sourceType: Type<T>): BindingImpl<T> {
+    checkType(sourceType);
+    let binding: BindingImpl<T> = this.bindings.get(sourceType);
     if (!binding) {
-      binding = new BindingImpl(baseSource, this);
-      this.bindings.set(baseSource, binding);
+      binding = new BindingImpl(sourceType, this, this.scopes, this.containerOptions);
+      this.bindings.set(sourceType, binding);
     }
+
     return binding;
   }
 
-  get<T extends Function>(source: T): T[keyof T] {
-    const binding: BindingImpl = this.getBinding(source);
+  get<T>(source: Type<T>): T {
+    const binding: BindingImpl<T> = this.getBinding(source);
 
     return binding.getInstance();
   }
 
-  getType(source: Function): Function {
-    const binding: BindingImpl = this.getBinding(source);
+  getType<T>(source: Type<T>): Type<T> {
+    const binding: BindingImpl<T> = this.getBinding(source);
 
     return binding.getType();
   }
