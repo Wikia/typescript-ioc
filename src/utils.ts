@@ -6,3 +6,8 @@ export function checkType(source: Object): void {
     throw new TypeError('Invalid type requested to IoC container. Type is not defined.');
   }
 }
+
+export interface Type<T> extends Function {
+  // tslint:disable-next-line:callable-types
+  new (...args: any[]): T;
+}

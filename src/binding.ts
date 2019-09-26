@@ -2,29 +2,29 @@ import { Container } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { BindingScope, Scope, SCOPES, ScopesDictionary } from './scope';
-import { checkType } from './utils';
+import { checkType, Type } from './utils';
 
 /**
  * A bind configuration for a given type in the IoC Container.
  */
-export interface Binding {
+export interface Binding<T> {
   /**
    * Inform a given implementation type to be used when a dependency for the source type is requested.
    * @param target The implementation type
    */
-  to(target: Object): this;
+  to(target: Type<T>): this;
 
   /**
    * Inform a value to be used when a dependency for the source type is requested.
    * @param value The instance that should be returned.
    */
-  value(value: any): this;
+  value(value: T): this;
 
   /**
    * Inform a provider to be used to create instances when a dependency for the source type is requested.
    * @param provider The provider to create instances
    */
-  provider(provider: Provider): this;
+  provider(provider: Provider<T>): this;
 
   /**
    * Inform a scope to handle the instances for objects created by the Container for this binding.
@@ -39,14 +39,14 @@ export interface Binding {
   withParams(...paramTypes: any[]): this;
 }
 
-export class BindingImpl implements Binding {
-  private targetType: FunctionConstructor;
-  private _provider: Provider;
-  private _scope: Scope;
+export class BindingImpl<T> implements Binding<T> {
+  private targetType: Type<T>;
+  private _provider: Provider<T>;
+  private _scope: Scope<T>;
   private paramTypes: any[];
 
   constructor(
-    private sourceType: FunctionConstructor,
+    private sourceType: Type<T>,
     private container: Container,
     private scopes: ScopesDictionary,
   ) {
@@ -54,7 +54,7 @@ export class BindingImpl implements Binding {
     this.to(this.sourceType);
   }
 
-  to(targetType: FunctionConstructor): this {
+  to(targetType: Type<T>): this {
     checkType(targetType);
     this.targetType = targetType;
     if (this.sourceType === this.targetType) {
@@ -85,11 +85,11 @@ export class BindingImpl implements Binding {
     this.provider(() => this.container.get(this.targetType));
   }
 
-  value(value: any): this {
+  value(value: T): this {
     return this.provider(() => value);
   }
 
-  provider(provider: Provider): this {
+  provider(provider: Provider<T>): this {
     this._provider = provider;
     this._scope.reset(this.sourceType);
 
@@ -109,11 +109,11 @@ export class BindingImpl implements Binding {
     return this;
   }
 
-  getInstance(): any {
+  getInstance(): T {
     return this._scope.resolve(() => this._provider(this.container), this.sourceType);
   }
 
-  getType(): Function {
+  getType(): Type<T> {
     return this.targetType;
   }
 }
