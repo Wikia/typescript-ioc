@@ -55,7 +55,7 @@ npm install typescript -g
 To install dependency-injection-js:
 
 ```bash
-npm install git+https://github.com/Wikia/dependency-injection-js.git
+npm install @wikia/dependency-injection
 ```
 
 ## Configuration
