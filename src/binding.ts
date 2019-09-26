@@ -1,7 +1,7 @@
-import { Container } from './container';
+import { Container, ContainerOptions } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
-import { BindingScope, Scope, SCOPES, ScopesDictionary } from './scope';
+import { BindingScope, Scope, ScopesDictionary } from './scope';
 import { checkType, Type } from './utils';
 
 /**
@@ -46,11 +46,12 @@ export class BindingImpl<T> implements Binding<T> {
   private paramTypes: any[];
 
   constructor(
-    private sourceType: Type<T>,
-    private container: Container,
-    private scopes: ScopesDictionary,
+    private readonly sourceType: Type<T>,
+    private readonly container: Container,
+    private readonly scopes: ScopesDictionary,
+    private readonly containerOptions: ContainerOptions,
   ) {
-    this.scope(SCOPES.Singleton);
+    this.scope(this.containerOptions.defaultScope);
     this.to(this.sourceType);
   }
 
