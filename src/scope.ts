@@ -59,7 +59,7 @@ export class SingletonScope<T = any> extends Scope<T> {
   private instances = new Map<Type<T>, T>();
 
   resolve(creator: Creator<T>, source: Type<T>): T {
-    let instance: any = this.instances.get(source);
+    let instance = this.instances.get(source);
     if (!instance) {
       instance = creator();
       this.instances.set(source, instance);

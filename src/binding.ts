@@ -36,14 +36,14 @@ export interface Binding<T> {
    * Inform the types to be retrieved from IoC Container and passed to the type constructor.
    * @param paramTypes A list with parameter types.
    */
-  withParams(...paramTypes: any[]): this;
+  withParams(...paramTypes: Type<any>[]): this;
 }
 
 export class BindingImpl<T> implements Binding<T> {
   private targetType: Type<T>;
   private _provider: Provider<T>;
   private _scope: Scope<T>;
-  private paramTypes: any[];
+  private paramTypes: Type<any>[];
 
   constructor(
     private readonly sourceType: Type<T>,
@@ -75,8 +75,8 @@ export class BindingImpl<T> implements Binding<T> {
     });
   }
 
-  private getParameters(): any[] {
-    const paramTypes: any[] =
+  private getParameters(): Type<any>[] {
+    const paramTypes: Type<any>[] =
       this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
 
     return paramTypes.map(paramType => this.container.get(paramType));
@@ -104,7 +104,7 @@ export class BindingImpl<T> implements Binding<T> {
     return this;
   }
 
-  withParams(...paramTypes: any[]): this {
+  withParams(...paramTypes: Type<any>[]): this {
     this.paramTypes = paramTypes;
 
     return this;
