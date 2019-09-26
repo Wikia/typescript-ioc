@@ -21,7 +21,8 @@
   },
   "license": "MIT",
   "files": [
-    "dist/"
+    "dist/",
+    "src/"
   ],
   "main": "./dist/commonjs/index.js",
   "module": "./dist/module/index.js",
