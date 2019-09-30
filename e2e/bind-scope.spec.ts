@@ -72,4 +72,21 @@ describe('bind scope', () => {
     // is transient because now BaseImpl is set to transient
     expect(instance1).not.toBe(instance2);
   });
+
+  it('should not work just for implementation class', () => {
+    container.bind(Base).to(BaseImp);
+
+    let instance1 = container.get(Base);
+    let instance2 = container.get(Base);
+
+    // is not transient because BaseImpl is not set to transient
+    expect(instance1).toBe(instance2);
+
+    container.bind(BaseImp).scope(SCOPES.Transient);
+    instance1 = container.get(Base);
+    instance2 = container.get(Base);
+
+    // is not transient because Base is not set to transient
+    expect(instance1).toBe(instance2);
+  });
 });
