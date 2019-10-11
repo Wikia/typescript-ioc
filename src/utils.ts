@@ -11,3 +11,5 @@ export interface Type<T> extends Function {
   // tslint:disable-next-line:callable-types
   new (...args: any[]): T;
 }
+
+export type TypeKey<T> = Type<T> | Function;
