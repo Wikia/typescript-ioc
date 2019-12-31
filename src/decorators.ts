@@ -1,4 +1,5 @@
 import { METADATA_KEY } from './metadata-keys';
+import { TypeKey, TypeKeyDictionary } from './utils';
 
 export function Injectable(): Function {
   // tslint:disable-next-line:only-arrow-functions
@@ -7,8 +8,31 @@ export function Injectable(): Function {
       throw new Error('Cannot apply @Injectable decorator multiple times.');
     }
 
-    const types = Reflect.getMetadata(METADATA_KEY.DESIGN_PARAM_TYPES, target) || [];
+    const types: TypeKey<any>[] =
+      Reflect.getMetadata(METADATA_KEY.DESIGN_PARAM_TYPES, target) || [];
+
     Reflect.defineMetadata(METADATA_KEY.PARAM_TYPES, types, target);
+
+    return target;
+  };
+}
+
+export function Inject<T extends Function>(identifier: TypeKey<T>): Function {
+  // tslint:disable-next-line:only-arrow-functions
+  return function(target: T, propertyKey: string | symbol, parameterIndex: number): T {
+    if (propertyKey || typeof parameterIndex !== 'number') {
+      throw new Error('Cannot apply @Inject decorator to a property.');
+    }
+
+    const dictionary: TypeKeyDictionary =
+      Reflect.getMetadata(METADATA_KEY.TAGGED_TYPES, target) || {};
+
+    if (dictionary[parameterIndex.toString()]) {
+      throw new Error('Cannot apply @Inject decorator multiple times on the same parameter.');
+    }
+
+    dictionary[parameterIndex.toString()] = identifier;
+    Reflect.defineMetadata(METADATA_KEY.TAGGED_TYPES, dictionary, target);
 
     return target;
   };

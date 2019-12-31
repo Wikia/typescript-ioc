@@ -12,4 +12,8 @@ export interface Type<T> extends Function {
   new (...args: any[]): T;
 }
 
-export type TypeKey<T> = Type<T> | Function;
+export type TypeKey<T> = Type<T> | Function | symbol | string;
+
+export interface TypeKeyDictionary {
+  [index: string]: TypeKey<any>;
+}
