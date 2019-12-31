@@ -2,7 +2,7 @@ import { Container, ContainerOptions } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { BindingScope, Scope, ScopesDictionary } from './scope';
-import { checkType, Type } from './utils';
+import { checkType, Type, TypeKey, TypeKeyDictionary } from './utils';
 
 /**
  * A bind configuration for a given type in the IoC Container.
@@ -76,10 +76,18 @@ export class BindingImpl<T> implements Binding<T> {
   }
 
   private getParameters(): Type<any>[] {
-    const paramTypes: Type<any>[] =
-      this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
+    let types: TypeKey<any>[] = this.paramTypes;
 
-    return paramTypes.map(paramType => this.container.get(paramType));
+    if (!types) {
+      const metadataTypes: TypeKey<any>[] =
+        this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
+      const taggedTypesDict: TypeKeyDictionary =
+        Reflect.getMetadata(METADATA_KEY.TAGGED_TYPES, this.targetType) || {};
+
+      types = metadataTypes.map((type, index) => taggedTypesDict[index] || type);
+    }
+
+    return types.map(paramType => this.container.get(paramType));
   }
 
   private provideTargetType(): void {
