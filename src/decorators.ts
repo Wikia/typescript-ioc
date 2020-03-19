@@ -1,7 +1,13 @@
 import { METADATA_KEY } from './metadata-keys';
+import { BindingScope } from './scope';
 import { TypeKey, TypeKeyDictionary } from './utils';
 
-export function Injectable(): Function {
+export interface InjectableOptions {
+  autobind?: boolean;
+  scope?: BindingScope;
+}
+
+export function Injectable(options: InjectableOptions = {}): Function {
   // tslint:disable-next-line:only-arrow-functions
   return function<T>(target: T): T {
     if (Reflect.hasOwnMetadata(METADATA_KEY.PARAM_TYPES, target)) {
@@ -12,6 +18,13 @@ export function Injectable(): Function {
       Reflect.getMetadata(METADATA_KEY.DESIGN_PARAM_TYPES, target) || [];
 
     Reflect.defineMetadata(METADATA_KEY.PARAM_TYPES, types, target);
+
+    if (typeof options.autobind === 'boolean') {
+      Reflect.defineMetadata(METADATA_KEY.AUTOBIND, options.autobind, target);
+    }
+    if (typeof options.scope === 'string') {
+      Reflect.defineMetadata(METADATA_KEY.SCOPE, options.scope, target);
+    }
 
     return target;
   };

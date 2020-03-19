@@ -1,10 +1,31 @@
 /**
+ * Utility function to validate type key
+ */
+export function checkTypeKey<T = any>(input: any): asserts input is TypeKey<T> {
+  if (!isTypeKey(input)) {
+    throw new TypeError(
+      'Invalid type requested to IoC container. TypeKey must be Class, symbol or string.',
+    );
+  }
+}
+
+export function isTypeKey<T = any>(input: any): input is TypeKey<T> {
+  const type = typeof input;
+
+  return isType(input) || type === 'symbol' || type === 'string';
+}
+
+/**
  * Utility function to validate type
  */
-export function checkType(source: Object): void {
-  if (!source) {
-    throw new TypeError('Invalid type requested to IoC container. Type is not defined.');
+export function checkType<T = any>(input: any): asserts input is Type<T> {
+  if (!isType(input)) {
+    throw new TypeError('Invalid type requested to IoC container. Type must be Class.');
   }
+}
+
+export function isType<T = any>(input: any): input is Type<T> {
+  return typeof input === 'function';
 }
 
 export interface Type<T> extends Function {

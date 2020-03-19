@@ -2,7 +2,7 @@ import { Container, ContainerOptions } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { BindingScope, Scope, ScopesDictionary } from './scope';
-import { checkType, Type, TypeKey, TypeKeyDictionary } from './utils';
+import { checkType, isType, Type, TypeKey, TypeKeyDictionary } from './utils';
 
 /**
  * A bind configuration for a given type in the IoC Container.
@@ -43,21 +43,28 @@ export class BindingImpl<T> implements Binding<T> {
   private targetType: Type<T>;
   private _provider: Provider<T>;
   private _scope: Scope<T>;
-  private paramTypes: Type<any>[];
+  private paramTypes: TypeKey<any>[] = [];
 
   constructor(
     private readonly sourceType: Type<T>,
     private readonly container: Container,
     private readonly scopes: ScopesDictionary,
-    private readonly containerOptions: ContainerOptions,
+    options: ContainerOptions,
   ) {
-    this.scope(this.containerOptions.defaultScope);
-    this.to(this.sourceType);
+    if (!isType(this.sourceType)) {
+      return this.scope(options.defaultScope);
+    }
+
+    this.scope(Reflect.getMetadata(METADATA_KEY.SCOPE, this.sourceType) ?? options.defaultScope);
+    if (Reflect.getMetadata(METADATA_KEY.AUTOBIND, this.sourceType) ?? options.defaultAutobind) {
+      this.to(this.sourceType);
+    }
   }
 
   to(targetType: Type<T>): this {
     checkType(targetType);
     this.targetType = targetType;
+    this.paramTypes = this.getMetadataParamTypes();
     if (this.sourceType === this.targetType) {
       this.provideSourceType();
     } else {
@@ -75,19 +82,17 @@ export class BindingImpl<T> implements Binding<T> {
     });
   }
 
+  private getMetadataParamTypes(): TypeKey<any>[] {
+    const metadataTypes: TypeKey<any>[] =
+      Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
+    const taggedTypesDict: TypeKeyDictionary =
+      Reflect.getMetadata(METADATA_KEY.TAGGED_TYPES, this.targetType) || {};
+
+    return metadataTypes.map((type, index) => taggedTypesDict[index] || type);
+  }
+
   private getParameters(): Type<any>[] {
-    let types: TypeKey<any>[] = this.paramTypes;
-
-    if (!types) {
-      const metadataTypes: TypeKey<any>[] =
-        this.paramTypes || Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
-      const taggedTypesDict: TypeKeyDictionary =
-        Reflect.getMetadata(METADATA_KEY.TAGGED_TYPES, this.targetType) || {};
-
-      types = metadataTypes.map((type, index) => taggedTypesDict[index] || type);
-    }
-
-    return types.map(paramType => this.container.get(paramType));
+    return this.paramTypes.map(paramType => this.container.get(paramType));
   }
 
   private provideTargetType(): void {
@@ -119,6 +124,10 @@ export class BindingImpl<T> implements Binding<T> {
   }
 
   getInstance(): T {
+    if (!this._provider) {
+      throw new Error(`${this.sourceType} is not bound to anything.`);
+    }
+
     return this._scope.resolve(() => this._provider(this.container), this.sourceType);
   }
 

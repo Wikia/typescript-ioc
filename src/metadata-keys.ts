@@ -13,4 +13,14 @@ export const METADATA_KEY = {
    * used to store identifiers applies with @Inject decorator
    */
   TAGGED_TYPES: 'wikia-ioc:taggedtypes',
+
+  /**
+   * used to indicate if given class should be bound automatically
+   */
+  AUTOBIND: 'wikia-ioc:autobind',
+
+  /**
+   * used to indicate scope of given class
+   */
+  SCOPE: 'wikia-ioc:scope',
 };
