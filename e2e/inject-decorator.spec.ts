@@ -8,11 +8,14 @@ class MockClass implements MockInterface {
   name = 'mock class';
 }
 
+const symbol = Symbol('symbol');
+
 @Injectable()
 class TestClass {
   constructor(
     public container: Container,
-    @Inject('symbol') public symbolParameter: MockInterface,
+    @Inject('string') public stringParameter: MockInterface,
+    @Inject(symbol) public symbolParameter: MockInterface,
   ) {}
 }
 
@@ -21,43 +24,60 @@ describe('inject decorator', () => {
 
   beforeEach(() => {
     container = new Container();
-
-    container.bind('symbol').to(MockClass);
   });
 
-  it('should work', () => {
-    const instance = container.get(TestClass);
-
-    expect(instance.container).toBe(container);
-    expect(instance.symbolParameter instanceof MockClass).toBe(true);
-    expect(instance.symbolParameter.name).toBe('mock class');
-  });
-
-  it('should throw if on property', () => {
+  it('should throw without providing', () => {
     try {
-      // @ts-ignore
-      class ClassWithProperty {
-        @Inject('symbol') property: any;
-      }
-
+      container.get(TestClass);
       expect(true).toBe(false);
     } catch (e) {
-      expect(e.message).toMatch('Cannot apply @Inject decorator to a property.');
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toMatch('is not bound to anything.');
     }
   });
 
-  it('should throw if on multiple times', () => {
-    try {
-      // @ts-ignore
-      class ClassWithParameter {
-        constructor(@Inject('symbol1') @Inject('symbol2') public parameter: any) {}
-      }
+  describe('provided symbols', () => {
+    beforeEach(() => {
+      container.bind('string').to(MockClass);
+      container.bind(symbol).to(MockClass);
+    });
 
-      expect(true).toBe(false);
-    } catch (e) {
-      expect(e.message).toMatch(
-        'Cannot apply @Inject decorator multiple times on the same parameter.',
-      );
-    }
+    it('should work', () => {
+      const instance = container.get(TestClass);
+
+      expect(instance.container).toBe(container);
+      expect(instance.stringParameter instanceof MockClass).toBe(true);
+      expect(instance.stringParameter.name).toBe('mock class');
+      expect(instance.symbolParameter instanceof MockClass).toBe(true);
+      expect(instance.symbolParameter.name).toBe('mock class');
+    });
+
+    it('should throw if on property', () => {
+      try {
+        // @ts-ignore
+        class ClassWithProperty {
+          @Inject('string') property: any;
+        }
+
+        expect(true).toBe(false);
+      } catch (e) {
+        expect(e.message).toMatch('Cannot apply @Inject decorator to a property.');
+      }
+    });
+
+    it('should throw if on multiple times', () => {
+      try {
+        // @ts-ignore
+        class ClassWithParameter {
+          constructor(@Inject('string1') @Inject('string2') public parameter: any) {}
+        }
+
+        expect(true).toBe(false);
+      } catch (e) {
+        expect(e.message).toMatch(
+          'Cannot apply @Inject decorator multiple times on the same parameter.',
+        );
+      }
+    });
   });
 });

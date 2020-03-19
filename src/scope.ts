@@ -1,5 +1,4 @@
 // tslint:disable:max-classes-per-file
-
 import { Type } from './utils';
 
 type Creator<T> = () => T;

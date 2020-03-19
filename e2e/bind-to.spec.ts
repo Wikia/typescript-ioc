@@ -68,7 +68,15 @@ describe('bind to', () => {
 
   it('should throw for undefined', () => {
     expect(() => container.bind(undefined)).toThrow(
-      TypeError('Invalid type requested to IoC container. Type is not defined.'),
+      TypeError(
+        'Invalid type requested to IoC container. TypeKey must be Class, symbol or string.',
+      ),
+    );
+  });
+
+  it('should throw when binding to invalid', () => {
+    expect(() => container.bind(MasterClass).to('invalid' as any)).toThrow(
+      TypeError('Invalid type requested to IoC container. Type must be Class.'),
     );
   });
 });

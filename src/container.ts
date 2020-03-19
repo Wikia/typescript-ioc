@@ -1,13 +1,19 @@
 import 'reflect-metadata';
 import { Binding, BindingImpl } from './binding';
 import { BindingScope, SCOPES, ScopesDictionary, SingletonScope, TransientScope } from './scope';
-import { checkType, Type, TypeKey } from './utils';
+import { checkTypeKey, Type, TypeKey } from './utils';
 
 export interface ContainerOptions {
   /**
    * @default Singleton
    */
   defaultScope?: BindingScope;
+
+  /**
+   * Defines whether classes should be bound autobind by default.
+   * @default true
+   */
+  defaultAutobind?: boolean;
 }
 
 /**
@@ -26,6 +32,7 @@ export class Container {
   constructor(containerOptions: ContainerOptions = {}) {
     this.containerOptions = {
       defaultScope: SCOPES.Singleton,
+      defaultAutobind: true,
       ...containerOptions,
     };
 
@@ -40,22 +47,11 @@ export class Container {
    * Container.bind(PersonDAO).to(ProgrammerDAO).scope(SCOPES.Singleton);
    */
   bind<T>(source: TypeKey<T>): Binding<T> {
-    if (!this.isBound(source)) {
-      return this.getBinding(source).to(source as Type<T>);
-    }
-
-    return this.getBinding(source);
+    return this.ensureBinding(source);
   }
 
-  private isBound<T>(sourceType: TypeKey<T>): boolean {
-    checkType(sourceType);
-    const binding: BindingImpl<T> = this.bindings.get(sourceType);
-
-    return !!binding;
-  }
-
-  private getBinding<T>(sourceType: TypeKey<T>): BindingImpl<T> {
-    checkType(sourceType);
+  private ensureBinding<T>(sourceType: TypeKey<T>): BindingImpl<T> {
+    checkTypeKey(sourceType);
     let binding: BindingImpl<T> = this.bindings.get(sourceType);
     if (!binding) {
       binding = new BindingImpl(sourceType as Type<T>, this, this.scopes, this.containerOptions);
@@ -70,7 +66,7 @@ export class Container {
    * If there is no declared dependency to the given source type, an implicit bind is performed to this type.
    */
   get<T>(source: TypeKey<T>): T {
-    const binding: BindingImpl<T> = this.getBinding(source);
+    const binding: BindingImpl<T> = this.ensureBinding(source);
 
     return binding.getInstance();
   }
@@ -79,7 +75,7 @@ export class Container {
    * Retrieve a type associated with the type provided from the container.
    */
   getType<T>(source: TypeKey<T>): Type<T> {
-    const binding: BindingImpl<T> = this.getBinding(source);
+    const binding: BindingImpl<T> = this.ensureBinding(source);
 
     return binding.getType();
   }
