@@ -66,6 +66,12 @@ export class Container {
     return binding;
   }
 
+  unbind<T>(binder: Binder<T>): void {
+    const typeType = isTypeKey(binder) ? binder : binder?.bind;
+
+    this.bindings.delete(typeType);
+  }
+
   /**
    * Retrieve an object from the container. It will resolve all dependencies and apply any type replacement before return the object.
    * If there is no declared dependency to the given source type, an implicit bind is performed to this type.

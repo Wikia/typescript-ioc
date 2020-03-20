@@ -26,6 +26,19 @@ describe('inject decorator', () => {
     container = new Container();
   });
 
+  it('should work with binder object', () => {
+    container.bind({ bind: 'string', to: MockClass });
+    container.bind({ bind: symbol, value: new MockClass() });
+
+    const instance = container.get(TestClass);
+
+    expect(instance.container).toBe(container);
+    expect(instance.stringParameter instanceof MockClass).toBe(true);
+    expect(instance.stringParameter.name).toBe('mock class');
+    expect(instance.symbolParameter instanceof MockClass).toBe(true);
+    expect(instance.symbolParameter.name).toBe('mock class');
+  });
+
   it('should throw without providing', () => {
     try {
       container.get(TestClass);
