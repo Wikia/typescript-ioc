@@ -1,7 +1,8 @@
 import 'reflect-metadata';
+import { applyBinder, Binder } from './binder';
 import { Binding, BindingImpl } from './binding';
 import { BindingScope, SCOPES, ScopesDictionary, SingletonScope, TransientScope } from './scope';
-import { checkTypeKey, Type, TypeKey } from './utils';
+import { checkTypeKey, isTypeKey, Type, TypeKey } from './utils';
 
 export interface ContainerOptions {
   /**
@@ -46,8 +47,12 @@ export class Container {
    * @example
    * Container.bind(PersonDAO).to(ProgrammerDAO).scope(SCOPES.Singleton);
    */
-  bind<T>(source: TypeKey<T>): Binding<T> {
-    return this.ensureBinding(source);
+  bind<T>(binder: Binder<T>): Binding<T> {
+    if (isTypeKey(binder)) {
+      return this.ensureBinding(binder);
+    }
+
+    return applyBinder(this.ensureBinding(binder?.bind), binder);
   }
 
   private ensureBinding<T>(sourceType: TypeKey<T>): BindingImpl<T> {
