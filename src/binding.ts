@@ -125,7 +125,7 @@ export class BindingImpl<T> implements Binding<T> {
 
   getInstance(): T {
     if (!this._provider) {
-      throw new Error(`${this.sourceType} is not bound to anything.`);
+      throw new Error(`${this.sourceType.toString()} is not bound to anything.`);
     }
 
     return this._scope.resolve(() => this._provider(this.container), this.sourceType);

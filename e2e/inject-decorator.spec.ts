@@ -49,6 +49,26 @@ describe('inject decorator', () => {
     }
   });
 
+  it('should throw without providing (symbol itself)', () => {
+    try {
+      container.get(symbol);
+      expect(true).toBe(false);
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toMatch('is not bound to anything.');
+    }
+  });
+
+  it('should throw without providing (string itself)', () => {
+    try {
+      container.get('string');
+      expect(true).toBe(false);
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toMatch('is not bound to anything.');
+    }
+  });
+
   describe('provided symbols', () => {
     beforeEach(() => {
       container.bind('string').to(MockClass);
