@@ -27,8 +27,22 @@ describe('unbind', () => {
       expect(instance1).not.toBe(instance2);
     });
 
-    it('should work for not autobind', () => {
+    it('should work for not autobind with bind to', () => {
       container.bind(NotAutobindClass).to(NotAutobindClass);
+      expect(container.get(NotAutobindClass) instanceof NotAutobindClass).toBe(true);
+
+      container.unbind(NotAutobindClass);
+      try {
+        container.get(NotAutobindClass);
+        expect(true).toBe(false);
+      } catch (e) {
+        expect(e).toBeInstanceOf(Error);
+        expect(e.message).toMatch('is not bound to anything.');
+      }
+    });
+
+    it('should work for not autobind with simple bind', () => {
+      container.bind(NotAutobindClass);
       expect(container.get(NotAutobindClass) instanceof NotAutobindClass).toBe(true);
 
       container.unbind(NotAutobindClass);
