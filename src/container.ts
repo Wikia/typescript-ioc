@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { applyBinder, Binder } from './binder';
 import { Binding, BindingImpl } from './binding';
 import { BindingScope, SCOPES, ScopesDictionary, SingletonScope, TransientScope } from './scope';
-import { checkTypeKey, isType, isTypeKey, Type, TypeKey } from './utils';
+import { assertTypeKey, isType, isTypeKey, Type, TypeKey } from './utils';
 
 export interface ContainerOptions {
   /**
@@ -65,17 +65,6 @@ export class Container {
     return applyBinder(this.ensureBinding(key), binder);
   }
 
-  private ensureBinding<T>(sourceType: TypeKey<T>): BindingImpl<T> {
-    checkTypeKey(sourceType);
-    let binding: BindingImpl<T> = this.bindings.get(sourceType);
-    if (!binding) {
-      binding = new BindingImpl(sourceType as Type<T>, this, this.scopes, this.containerOptions);
-      this.bindings.set(sourceType, binding);
-    }
-
-    return binding;
-  }
-
   unbind<T>(binder: Binder<T>): void {
     const typeType = isTypeKey(binder) ? binder : binder?.bind;
 
@@ -99,5 +88,16 @@ export class Container {
     const binding: BindingImpl<T> = this.ensureBinding(source);
 
     return binding.getType();
+  }
+
+  private ensureBinding<T>(sourceType: TypeKey<T>): BindingImpl<T> {
+    assertTypeKey(sourceType);
+    let binding: BindingImpl<T> = this.bindings.get(sourceType);
+    if (!binding) {
+      binding = new BindingImpl(sourceType as Type<T>, this, this.scopes, this.containerOptions);
+      this.bindings.set(sourceType, binding);
+    }
+
+    return binding;
   }
 }

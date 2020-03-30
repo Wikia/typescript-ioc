@@ -1,7 +1,7 @@
 /**
  * Utility function to validate type key
  */
-export function checkTypeKey<T = any>(input: any): asserts input is TypeKey<T> {
+export function assertTypeKey<T = any>(input: any): asserts input is TypeKey<T> {
   if (!isTypeKey(input)) {
     throw new TypeError(
       'Invalid type requested to IoC container. TypeKey must be Class, symbol or string.',
@@ -18,7 +18,7 @@ export function isTypeKey<T = any>(input: any): input is TypeKey<T> {
 /**
  * Utility function to validate type
  */
-export function checkType<T = any>(input: any): asserts input is Type<T> {
+export function assertType<T = any>(input: any): asserts input is Type<T> {
   if (!isType(input)) {
     throw new TypeError('Invalid type requested to IoC container. Type must be Class.');
   }

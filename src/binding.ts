@@ -2,7 +2,7 @@ import { Container, ContainerOptions } from './container';
 import { METADATA_KEY } from './metadata-keys';
 import { Provider } from './provider';
 import { BindingScope, Scope, ScopesDictionary } from './scope';
-import { checkType, isType, Type, TypeKey, TypeKeyDictionary } from './utils';
+import { assertType, isType, Type, TypeKey, TypeKeyDictionary } from './utils';
 
 /**
  * A bind configuration for a given type in the IoC Container.
@@ -36,7 +36,7 @@ export interface Binding<T> {
    * Inform the types to be retrieved from IoC Container and passed to the type constructor.
    * @param paramTypes A list with parameter types.
    */
-  withParams(...paramTypes: Type<any>[]): this;
+  withParams(...paramTypes: TypeKey<any>[]): this;
 }
 
 export class BindingImpl<T> implements Binding<T> {
@@ -46,7 +46,7 @@ export class BindingImpl<T> implements Binding<T> {
   private paramTypes: TypeKey<any>[] = [];
 
   constructor(
-    private readonly sourceType: Type<T>,
+    private readonly sourceType: TypeKey<T>,
     private readonly container: Container,
     private readonly scopes: ScopesDictionary,
     options: ContainerOptions,
@@ -62,24 +62,16 @@ export class BindingImpl<T> implements Binding<T> {
   }
 
   to(targetType: Type<T>): this {
-    checkType(targetType);
+    assertType(targetType);
     this.targetType = targetType;
     this.paramTypes = this.getMetadataParamTypes();
     if (this.sourceType === this.targetType) {
-      this.provideSourceType();
+      this.provideSourceType(targetType);
     } else {
-      this.provideTargetType();
+      this.provideTargetType(targetType);
     }
 
     return this;
-  }
-
-  private provideSourceType(): void {
-    this.provider(() => {
-      const params = this.getParameters();
-
-      return new this.sourceType(...params);
-    });
   }
 
   private getMetadataParamTypes(): TypeKey<any>[] {
@@ -91,12 +83,20 @@ export class BindingImpl<T> implements Binding<T> {
     return metadataTypes.map((type, index) => taggedTypesDict[index] || type);
   }
 
+  private provideSourceType(type: Type<T>): void {
+    this.provider(() => {
+      const params = this.getParameters();
+
+      return new type(...params);
+    });
+  }
+
   private getParameters(): Type<any>[] {
     return this.paramTypes.map(paramType => this.container.get(paramType));
   }
 
-  private provideTargetType(): void {
-    this.provider(() => this.container.get(this.targetType));
+  private provideTargetType(type: Type<T>): void {
+    this.provider(() => this.container.get(type));
   }
 
   value(value: T): this {
@@ -117,7 +117,7 @@ export class BindingImpl<T> implements Binding<T> {
     return this;
   }
 
-  withParams(...paramTypes: Type<any>[]): this {
+  withParams(...paramTypes: TypeKey<any>[]): this {
     this.paramTypes = paramTypes;
 
     return this;

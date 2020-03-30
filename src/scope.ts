@@ -1,5 +1,5 @@
 // tslint:disable:max-classes-per-file
-import { Type } from './utils';
+import { Type, TypeKey } from './utils';
 
 type Creator<T> = () => T;
 
@@ -37,13 +37,13 @@ export abstract class Scope<T> {
    * @param source The source type of this bind.
    * @return the resolved instance.
    */
-  abstract resolve(creator: Creator<T>, source: Type<T>): T;
+  abstract resolve(creator: Creator<T>, source: TypeKey<T>): T;
 
   /**
    * Called by the IoC Container when some configuration is changed on the Container binding.
    * @param source The source type that has its configuration changed.
    */
-  reset(source: Type<T>): void {
+  reset(source: TypeKey<T>): void {
     // Do nothing
   }
 }
@@ -55,9 +55,9 @@ export class TransientScope<T = any> extends Scope<T> {
 }
 
 export class SingletonScope<T = any> extends Scope<T> {
-  private instances = new Map<Type<T>, T>();
+  private instances = new Map<TypeKey<T>, T>();
 
-  resolve(creator: Creator<T>, source: Type<T>): T {
+  resolve(creator: Creator<T>, source: TypeKey<T>): T {
     let instance = this.instances.get(source);
     if (!instance) {
       instance = creator();
@@ -67,7 +67,7 @@ export class SingletonScope<T = any> extends Scope<T> {
     return instance;
   }
 
-  reset(source: Type<T>): void {
+  reset(source: TypeKey<T>): void {
     this.instances.delete(source);
   }
 }

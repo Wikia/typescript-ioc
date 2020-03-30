@@ -1,7 +1,7 @@
 import { Binding } from './binding';
 import { TypeKey } from './utils';
 
-export type Binder<T> = TypeKey<T> | ValueBinder<T> | ClassBinder<T> | ProviderBinder<T>;
+export type Binder<T> = TypeKey<T> | BinderObject<T>;
 export type BinderObject<T> = ValueBinder<T> | ClassBinder<T> | ProviderBinder<T>;
 
 type ValueBinder<T> = {
