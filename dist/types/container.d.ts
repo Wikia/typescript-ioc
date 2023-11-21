@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Binder } from './binder';
 import { Binding } from './binding';
 import { BindingScope } from './scope';

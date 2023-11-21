@@ -1,3 +1,4 @@
+// @ts-ignore
 if (typeof Reflect === 'undefined' || !Reflect.getMetadata) {
   throw new Error(
     `@wikia/dependency-injection requires a reflect polyfill.` +

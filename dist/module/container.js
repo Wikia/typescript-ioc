@@ -9,7 +9,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import 'reflect-metadata';
 import { applyBinder } from './binder';
 import { BindingImpl } from './binding';
 import { SCOPES, SingletonScope, TransientScope } from './scope';
