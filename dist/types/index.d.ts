@@ -1,3 +1,4 @@
+import '@abraham/reflection';
 export { BindingScope, SCOPES } from './scope';
 export { Injectable, Inject } from './decorators';
 export { Binding } from './binding';

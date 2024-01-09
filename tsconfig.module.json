@@ -5,6 +5,6 @@
     "declarationDir": "dist/types",
     "outDir": "dist/module",
     "module": "es2015",
-    "types": ["reflect-metadata"]
+    "types": ["@abraham/reflection"]
   }
 }

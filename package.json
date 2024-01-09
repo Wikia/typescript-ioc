@@ -30,6 +30,7 @@
   "scripts": {
     "start": "tsc -w",
     "prepublishOnly": "npm run build",
+    "postinstall": "npm run build",
     "prebuild": "rimraf dist",
     "build": "npm run tsc",
     "watch": "npm run tsc:module -- -w",
@@ -47,7 +48,9 @@
     "commit": "git-cz",
     "semantic-release": "semantic-release"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@abraham/reflection": "^0.12.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
@@ -60,7 +63,6 @@
     "jest": "^25.1.0",
     "lint-staged": "^10.0.8",
     "prettier": "^1.19.1",
-    "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "semantic-release": "^17.0.4",
     "ts-jest": "^25.2.1",
