@@ -1,3 +1,4 @@
+import '@abraham/reflection';
 import { applyBinder, Binder } from './binder';
 import { Binding, BindingImpl } from './binding';
 import { BindingScope, SCOPES, ScopesDictionary, SingletonScope, TransientScope } from './scope';

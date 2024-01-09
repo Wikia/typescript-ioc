@@ -55,9 +55,7 @@ export class BindingImpl<T> implements Binding<T> {
       return this.scope(options.defaultScope);
     }
 
-    // @ts-ignore
     this.scope(Reflect.getMetadata(METADATA_KEY.SCOPE, this.sourceType) ?? options.defaultScope);
-    // @ts-ignore
     if (Reflect.getMetadata(METADATA_KEY.AUTOBIND, this.sourceType) ?? options.defaultAutobind) {
       this.to(this.sourceType);
     }
@@ -78,10 +76,8 @@ export class BindingImpl<T> implements Binding<T> {
 
   private getMetadataParamTypes(): TypeKey<any>[] {
     const metadataTypes: TypeKey<any>[] =
-      // @ts-ignore
       Reflect.getMetadata(METADATA_KEY.PARAM_TYPES, this.targetType) || [];
     const taggedTypesDict: TypeKeyDictionary =
-      // @ts-ignore
       Reflect.getMetadata(METADATA_KEY.TAGGED_TYPES, this.targetType) || {};
 
     return metadataTypes.map((type, index) => taggedTypesDict[index] || type);

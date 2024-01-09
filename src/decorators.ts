@@ -1,3 +1,4 @@
+import { Target } from '@abraham/reflection';
 import { METADATA_KEY } from './metadata-keys';
 import { BindingScope } from './scope';
 import { TypeKey, TypeKeyDictionary } from './utils';
@@ -9,24 +10,19 @@ export interface InjectableOptions {
 
 export function Injectable(options: InjectableOptions = {}): Function {
   // tslint:disable-next-line:only-arrow-functions
-  return function<T>(target: T): T {
-    // @ts-ignore
+  return function<T extends Target>(target: T): T {
     if (Reflect.hasOwnMetadata(METADATA_KEY.PARAM_TYPES, target)) {
       throw new Error('Cannot apply @Injectable decorator multiple times.');
     }
 
     const types: TypeKey<any>[] =
-      // @ts-ignore
       Reflect.getMetadata(METADATA_KEY.DESIGN_PARAM_TYPES, target) || [];
-    // @ts-ignore
     Reflect.defineMetadata(METADATA_KEY.PARAM_TYPES, types, target);
 
     if (typeof options.autobind === 'boolean') {
-      // @ts-ignore
       Reflect.defineMetadata(METADATA_KEY.AUTOBIND, options.autobind, target);
     }
     if (typeof options.scope === 'string') {
-      // @ts-ignore
       Reflect.defineMetadata(METADATA_KEY.SCOPE, options.scope, target);
     }
 
@@ -42,7 +38,6 @@ export function Inject<T extends Function>(identifier: TypeKey<T>): Function {
     }
 
     const dictionary: TypeKeyDictionary =
-      // @ts-ignore
       Reflect.getMetadata(METADATA_KEY.TAGGED_TYPES, target) || {};
 
     if (dictionary[parameterIndex.toString()]) {
@@ -50,7 +45,6 @@ export function Inject<T extends Function>(identifier: TypeKey<T>): Function {
     }
 
     dictionary[parameterIndex.toString()] = identifier;
-    // @ts-ignore
     Reflect.defineMetadata(METADATA_KEY.TAGGED_TYPES, dictionary, target);
 
     return target;
