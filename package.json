@@ -30,7 +30,6 @@
   "scripts": {
     "start": "tsc -w",
     "prepublishOnly": "npm run build",
-    "postinstall": "npm run build",
     "prebuild": "rimraf dist",
     "build": "npm run tsc",
     "watch": "npm run tsc:module -- -w",
